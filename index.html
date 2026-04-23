@@ -246,7 +246,7 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
           </div>}
           {isToday&&<div style={{color:"#6b7c6b",fontSize:9,marginTop:2}}>오늘 (최신)</div>}
         </div>
-        {isToday?<div style={{width:40}}/>:<button onClick={()=>goDate(1)} style={S.dateNav}>›</button>}
+        <button onClick={()=>goDate(1)} style={{...S.dateNav,opacity:isToday?0.2:1}}>›</button>
       </div>
 
       {isSun&&<div style={{...S.card,textAlign:"center",padding:20}}><div style={{fontSize:24,marginBottom:6}}>😴</div><div style={{color:"#6b7c6b",fontSize:13,fontWeight:700}}>일요일 · 휴식일</div></div>}
@@ -351,6 +351,7 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
         <div style={S.info}>다음 테스트: {nextTest.date.slice(5)} ({daysBetween(now,new Date(nextTest.date))}일 후)</div>
       )}
       <div style={{...S.info,textAlign:"center"}}><span style={{color:"#16a34a",fontWeight:700}}>GtG</span> 실패까지 가지 말 것 · 세트 간 15분+(상체) 30분+(하체)</div>
+      <div style={{height:150}}/>
     </div>
   );
 }
