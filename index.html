@@ -146,7 +146,7 @@ function App(){
     let totalDays=0,bodyDays=0,brainMax=0,brainEarned=0;
     const c=new Date(START);
     while(c<=now&&c<=END){
-      const wd=c.getDay();const rate=wd===0?0.5:wd===6?0.75:1;
+      const wd=c.getDay();const rate=wd===6?0.25:wd===0?0.5:1;
       const adjRd=Math.max(1,Math.round(3*rate));
       const adjLn=Math.max(1,Math.round(2*rate));
       const dayMax=1+1+2+adjRd+1+adjLn; // nf+yoga+med+read+write+lang
@@ -212,8 +212,8 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
   const dayOfWeek=d.getDay(); // 0=일, 6=토
   const isSat=dayOfWeek===6;const isSun=dayOfWeek===0;
   const isWeekend=isSat||isSun;
-  const wkRate=isSun?0.5:isSat?0.75:1; // 일50%, 토75%, 평일100%
-  const wkLabel=isSun?"일요일 50%":isSat?"토요일 75%":"";
+  const wkRate=isSat?0.25:isSun?0.5:1; // 토25%, 일50%, 평일100%
+  const wkLabel=isSat?"토요일 25%":isSun?"일요일 50%":"";
 
   // 주말 조정된 목표
   const adjSets=Math.max(1,Math.round(plan.sets*wkRate));
