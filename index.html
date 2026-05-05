@@ -75,8 +75,8 @@ const KEY_LOGS="gtg-v4-logs";const KEY_TEST="gtg-v4-tests";
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||"{}")}catch{return{}}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 
-const emptyLog=()=>({p:0,u:0,plank:false,yoga:false,med:0,nf:false,read:0,write:false,lang:0});
-const getLog=(logs,ds)=>{const l=logs[ds];return l?{...emptyLog(),...l}:emptyLog()};
+const emptyLog=()=>({p:0,u:0,plank:false,yoga:0,med:0,nf:false,read:0,write:false,lang:0});
+const getLog=(logs,ds)=>{const l=logs[ds];if(!l)return emptyLog();const o={...emptyLog(),...l};if(o.yoga===true)o.yoga=1;if(o.yoga===false)o.yoga=0;return o};
 
 function getActivePlan(month,tests){
   const base=BASE_PLAN[month]||BASE_PLAN[4];
@@ -132,7 +132,7 @@ function App(){
     Object.entries(logs).forEach(([d,l])=>{const dt=new Date(d);
       if(dt.getMonth()+1===realMonth&&dt.getFullYear()===2026){
         sP+=l.p||0;sU+=l.u||0;vP+=(l.p||0)*realPlan.set.p;vU+=(l.u||0)*realPlan.set.u;
-        if(l.plank)plank++;if(l.yoga)yoga++;med+=(l.med||0);if(l.nf)nf++;
+        if(l.plank)plank++;yoga+=(l.yoga===true?1:(l.yoga||0));med+=(l.med||0);if(l.nf)nf++;
         read+=(l.read||0);if(l.write)write++;lang+=(l.lang||0);
         if((l.p||0)>0||(l.u||0)>0||l.plank||l.yoga||(l.med||0)>0||l.nf||(l.read||0)>0||l.write||(l.lang||0)>0)td++;
       }
@@ -167,13 +167,16 @@ function App(){
       const{rate}=getDayRate(ymd(c));
       const adjRd=Math.max(1,Math.round(3*rate));
       const adjLn=Math.max(1,Math.round(3*rate));
-      const dayMax=1+1+2+adjRd+1+adjLn; // nf+yoga+med(항상2)+read+write+lang
+      const adjYg=Math.max(1,Math.round(2*rate));
+      const dayMax=1+adjYg+2+adjRd+1+adjLn; // nf+yoga+med+read+write+lang
       totalDays++;brainMax+=dayMax;
       const l=logs[ymd(c)];const mp=BASE_PLAN[c.getMonth()+1];
       if(l&&mp){
         const adjS=Math.max(1,Math.round(mp.sets*rate));
         if((l.p||0)>=Math.ceil(adjS*0.5)&&(l.u||0)>=Math.ceil(adjS*0.5)&&l.plank)bodyDays++;
-        if(l.nf)brainEarned+=1;if(l.yoga)brainEarned+=1;
+        if(l.nf)brainEarned+=1;
+        const yogaVal=l.yoga===true?1:(l.yoga||0);
+        brainEarned+=Math.min(yogaVal,Math.max(1,Math.round(2*rate)));
         brainEarned+=Math.min(l.med||0,2);
         brainEarned+=Math.min(l.read||0,adjRd);
         if(l.write)brainEarned+=1;
@@ -234,7 +237,7 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
   const adjSets=Math.max(1,Math.round(plan.sets*wkRate));
   const adjRead=Math.max(1,Math.round(3*wkRate));
   const adjLang=Math.max(1,Math.round(3*wkRate));
-  const adjYoga=Math.max(5,Math.round(20*wkRate));
+  const adjYoga=Math.max(1,Math.round(2*wkRate));
   const adjPctP=Math.min(100,(tl.p/adjSets)*100);
   const adjPctU=Math.min(100,(tl.u/adjSets)*100);
 
@@ -281,7 +284,7 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
       <Chk icon="✏️" label="쓰기" sub="20분" done={tl.write} color="#6366f1" onToggle={()=>onToggle("write")}/>
       <MiniCtr label="🗣️ 영어 말하기" sub={`20분씩 × ${adjLang}회${isReduced?" ("+wkLabel+")":""}`} count={tl.lang||0} max={adjLang} color="#2563eb" onAdd={()=>onAddCapped("lang",adjLang)} onSub={()=>onSubField("lang")}/>
       <Chk icon="🔖" label="N.F." sub="" done={tl.nf} color="#a855f7" onToggle={()=>onToggle("nf")}/>
-      <Chk icon="🧘‍♀️" label="요가 / 스트레칭" sub={`${adjYoga}분${isReduced?" ("+wkLabel+")":""}`} done={tl.yoga} color="#16a34a" onToggle={()=>onToggle("yoga")}/>
+      <MiniCtr label="🧘‍♀️ 요가 / 스트레칭" sub={`10분씩 × ${adjYoga}회${isReduced?" ("+wkLabel+")":""}`} count={tl.yoga||0} max={adjYoga} color="#16a34a" onAdd={()=>onAddCapped("yoga",adjYoga)} onSub={()=>onSubField("yoga")}/>
 
       {/*월 누적*/}
       {isToday&&(
@@ -294,7 +297,7 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
           <div style={{display:"flex",gap:6,marginTop:10,fontSize:9,color:"#6b7c6b",flexWrap:"wrap"}}>
             <span>복근{mCum.plank}일</span><span>명상{mCum.med}회</span><span>읽기{mCum.read}회</span>
             <span>쓰기{mCum.write}일</span><span>영어{mCum.lang}회</span>
-            <span>N.F.{mCum.nf}일</span><span>요가{mCum.yoga}일</span><span>훈련{mCum.td}/{mCum.trainDays}일</span>
+            <span>N.F.{mCum.nf}일</span><span>요가{mCum.yoga}회</span><span>훈련{mCum.td}/{mCum.trainDays}일</span>
           </div>
         </div>
       )}
