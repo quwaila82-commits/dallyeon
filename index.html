@@ -53,6 +53,24 @@ const daysBetween=(a,b)=>Math.round((b-a)/86400000);
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
 const dayNames=["일","월","화","수","목","금","토"];
 
+// 2026년 대한민국 법정공휴일
+const HOLIDAYS=new Set([
+  "2026-01-01","2026-01-29","2026-01-30","2026-01-31", // 신정, 설날연휴
+  "2026-03-01","2026-05-05","2026-05-24", // 삼일절, 어린이날, 부처님오신날
+  "2026-06-06","2026-08-15", // 현충일, 광복절
+  "2026-09-24","2026-09-25","2026-09-26", // 추석연휴
+  "2026-10-03","2026-10-09","2026-12-25", // 개천절, 한글날, 성탄절
+]);
+const isHoliday=ds=>HOLIDAYS.has(ds);
+// 감량률: 토25%, 일50%, 공휴일50%, 평일100%
+const getDayRate=(date)=>{
+  const d=new Date(date);const wd=d.getDay();const ds=ymd(d);
+  if(wd===6)return{rate:0.25,label:"토요일 25%"};
+  if(wd===0)return{rate:0.5,label:"일요일 50%"};
+  if(isHoliday(ds))return{rate:0.5,label:"공휴일 50%"};
+  return{rate:1,label:""};
+};
+
 const KEY_LOGS="gtg-v4-logs";const KEY_TEST="gtg-v4-tests";
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||"{}")}catch{return{}}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
@@ -146,10 +164,10 @@ function App(){
     let totalDays=0,bodyDays=0,brainMax=0,brainEarned=0;
     const c=new Date(START);
     while(c<=now&&c<=END){
-      const wd=c.getDay();const rate=wd===6?0.25:wd===0?0.5:1;
+      const{rate}=getDayRate(ymd(c));
       const adjRd=Math.max(1,Math.round(3*rate));
-      const adjLn=Math.max(1,Math.round(2*rate));
-      const dayMax=1+1+2+adjRd+1+adjLn; // nf+yoga+med+read+write+lang
+      const adjLn=Math.max(1,Math.round(3*rate));
+      const dayMax=1+1+2+adjRd+1+adjLn; // nf+yoga+med(항상2)+read+write+lang
       totalDays++;brainMax+=dayMax;
       const l=logs[ymd(c)];const mp=BASE_PLAN[c.getMonth()+1];
       if(l&&mp){
@@ -209,17 +227,14 @@ function App(){
 /*═══ 기록 탭 ═══*/
 function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTest,today,tomorrow,now,goals,fc,logs,onAdd,onSub,onToggle,onAddCapped,onSubField,goDate,goToday}){
   const d=new Date(activeDate);const dow=dayNames[d.getDay()];
-  const dayOfWeek=d.getDay(); // 0=일, 6=토
-  const isSat=dayOfWeek===6;const isSun=dayOfWeek===0;
-  const isWeekend=isSat||isSun;
-  const wkRate=isSat?0.25:isSun?0.5:1; // 토25%, 일50%, 평일100%
-  const wkLabel=isSat?"토요일 25%":isSun?"일요일 50%":"";
+  const{rate:wkRate,label:wkLabel}=getDayRate(activeDate);
+  const isReduced=wkRate<1;
 
-  // 주말 조정된 목표
+  // 감량 조정 (명상은 제외)
   const adjSets=Math.max(1,Math.round(plan.sets*wkRate));
   const adjRead=Math.max(1,Math.round(3*wkRate));
-  const adjLang=Math.max(1,Math.round(2*wkRate));
-  const adjYoga=Math.round(20*wkRate);
+  const adjLang=Math.max(1,Math.round(3*wkRate));
+  const adjYoga=Math.max(5,Math.round(20*wkRate));
   const adjPctP=Math.min(100,(tl.p/adjSets)*100);
   const adjPctU=Math.min(100,(tl.u/adjSets)*100);
 
@@ -239,10 +254,10 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
         <button onClick={()=>goDate(1)} style={{...S.dateNav,opacity:activeDate>=tomorrow?0.2:1}}>›</button>
       </div>
 
-      {isWeekend&&(
+      {isReduced&&(
         <div style={{...S.card,padding:10,borderLeft:"4px solid #2563eb",background:"rgba(37,99,235,0.04)"}}>
           <div style={{color:"#2563eb",fontSize:11,fontWeight:800}}>🌿 {wkLabel} 강도</div>
-          <div style={{color:"#6b7c6b",fontSize:9,marginTop:2}}>주말 회복을 위해 훈련량이 줄어듭니다 · 세트 {plan.sets}→{adjSets}</div>
+          <div style={{color:"#6b7c6b",fontSize:9,marginTop:2}}>회복을 위해 훈련량 감소 (명상 제외) · 세트 {plan.sets}→{adjSets}</div>
         </div>
       )}
 
@@ -255,18 +270,18 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
 
       {/*── 목표1: 몸 ──*/}
       <GoalHeader g={goals.body} detail={`예상 P${fc.pj}·U${fc.uj}`}/>
-      <Ctr label="💪 푸시업" sub={`${plan.set.p}회 × ${adjSets}세트${isWeekend?" ("+wkLabel+")":""}`} count={tl.p} target={adjSets} vol={tl.p*plan.set.p} pct={adjPctP} color="#2563eb" grad="linear-gradient(90deg,#2563eb,#0891b2)" onAdd={()=>onAdd("p")} onSub={()=>onSub("p")}/>
-      <Ctr label="🏋️ 풀업" sub={`${plan.set.u}회 × ${adjSets}세트${isWeekend?" ("+wkLabel+")":""}`} count={tl.u} target={adjSets} vol={tl.u*plan.set.u} pct={adjPctU} color="#7c3aed" grad="linear-gradient(90deg,#7c3aed,#db2777)" onAdd={()=>onAdd("u")} onSub={()=>onSub("u")}/>
+      <Ctr label="💪 푸시업" sub={`${plan.set.p}회 × ${adjSets}세트${isReduced?" ("+wkLabel+")":""}`} count={tl.p} target={adjSets} vol={tl.p*plan.set.p} pct={adjPctP} color="#2563eb" grad="linear-gradient(90deg,#2563eb,#0891b2)" onAdd={()=>onAdd("p")} onSub={()=>onSub("p")}/>
+      <Ctr label="🏋️ 풀업" sub={`${plan.set.u}회 × ${adjSets}세트${isReduced?" ("+wkLabel+")":""}`} count={tl.u} target={adjSets} vol={tl.u*plan.set.u} pct={adjPctU} color="#7c3aed" grad="linear-gradient(90deg,#7c3aed,#db2777)" onAdd={()=>onAdd("u")} onSub={()=>onSub("u")}/>
       <Chk icon="💪" label="복근운동" sub="1회" done={tl.plank} color="#d97706" onToggle={()=>onToggle("plank")}/>
 
       {/*── 목표2: 두뇌 ──*/}
       <GoalHeader g={goals.brain} detail={`${goals.brainEarned}/${goals.brainMax}점`}/>
       <MiniCtr label="🧘 명상" sub="10분이상 × 2회" count={tl.med||0} max={2} color="#0891b2" onAdd={()=>onAddCapped("med",2)} onSub={()=>onSubField("med")}/>
-      <MiniCtr label="📖 읽기" sub={`20분씩 × ${adjRead}회${isWeekend?" ("+wkLabel+")":""}`} count={tl.read||0} max={adjRead} color="#0d9488" onAdd={()=>onAddCapped("read",adjRead)} onSub={()=>onSubField("read")}/>
+      <MiniCtr label="📖 읽기" sub={`20분씩 × ${adjRead}회${isReduced?" ("+wkLabel+")":""}`} count={tl.read||0} max={adjRead} color="#0d9488" onAdd={()=>onAddCapped("read",adjRead)} onSub={()=>onSubField("read")}/>
       <Chk icon="✏️" label="쓰기" sub="20분" done={tl.write} color="#6366f1" onToggle={()=>onToggle("write")}/>
-      <MiniCtr label="🌐 외국어" sub={`20분씩 × ${adjLang}회${isWeekend?" ("+wkLabel+")":""}`} count={tl.lang||0} max={adjLang} color="#2563eb" onAdd={()=>onAddCapped("lang",adjLang)} onSub={()=>onSubField("lang")}/>
+      <MiniCtr label="🗣️ 영어 말하기" sub={`20분씩 × ${adjLang}회${isReduced?" ("+wkLabel+")":""}`} count={tl.lang||0} max={adjLang} color="#2563eb" onAdd={()=>onAddCapped("lang",adjLang)} onSub={()=>onSubField("lang")}/>
       <Chk icon="🔖" label="N.F." sub="" done={tl.nf} color="#a855f7" onToggle={()=>onToggle("nf")}/>
-      <Chk icon="🧘‍♀️" label="요가 / 스트레칭" sub={`${adjYoga}분${isWeekend?" ("+wkLabel+")":""}`} done={tl.yoga} color="#16a34a" onToggle={()=>onToggle("yoga")}/>
+      <Chk icon="🧘‍♀️" label="요가 / 스트레칭" sub={`${adjYoga}분${isReduced?" ("+wkLabel+")":""}`} done={tl.yoga} color="#16a34a" onToggle={()=>onToggle("yoga")}/>
 
       {/*월 누적*/}
       {isToday&&(
@@ -278,7 +293,7 @@ function RecordView({plan,tl,activeDate,isToday,pctP,pctU,mCum,realMonth,nextTes
           </div>
           <div style={{display:"flex",gap:6,marginTop:10,fontSize:9,color:"#6b7c6b",flexWrap:"wrap"}}>
             <span>복근{mCum.plank}일</span><span>명상{mCum.med}회</span><span>읽기{mCum.read}회</span>
-            <span>쓰기{mCum.write}일</span><span>외국어{mCum.lang}회</span>
+            <span>쓰기{mCum.write}일</span><span>영어{mCum.lang}회</span>
             <span>N.F.{mCum.nf}일</span><span>요가{mCum.yoga}일</span><span>훈련{mCum.td}/{mCum.trainDays}일</span>
           </div>
         </div>
@@ -376,23 +391,23 @@ function CalView({logs,tests,calMonth,setCalMonth,today,onSelectDate}){
     <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
       {cells.map((c,i)=>{
         const ds=ymd(c.d);const isT=ds===today;const log=logs[ds];
-        const inR=c.d>=START&&c.d<=END&&!c.out;const sun=c.d.getDay()===0;const canTap=inR&&ds<=ymd(addDays(new Date(today),1));
+        const inR=c.d>=START&&c.d<=END&&!c.out;const sun=c.d.getDay()===0;const sat=c.d.getDay()===6;const hol=isHoliday(ds);const canTap=inR&&ds<=ymd(addDays(new Date(today),1));
         let pD=0,uD=0,hasBrain=false;
         if(log){pD=log.p||0;uD=log.u||0;hasBrain=!!(log.med||log.nf||log.yoga||log.read||log.write||log.lang)}
         const hasSome=pD>0||uD>0||hasBrain;
         const isTest=TEST_SCHEDULE.some(t=>t.date===ds);
         return(<div key={i} onClick={()=>canTap&&onSelectDate(ds)}
           style={{minHeight:48,padding:3,borderRadius:6,cursor:canTap?"pointer":"default",
-            background:isT?"rgba(22,163,74,0.12)":"#fff",border:isT?"1.5px solid rgba(22,163,74,0.5)":"1px solid rgba(0,0,0,0.06)",opacity:c.out?0.25:1}}>
-          <div style={{fontSize:10,fontWeight:isT?900:600,color:isT?"#16a34a":sun?"#dc2626":"#1a2e1a",fontFamily:"ui-monospace,monospace",marginBottom:1}}>
-            {c.d.getDate()}{isTest&&<span style={{color:"#d97706"}}>★</span>}
+            background:isT?"rgba(22,163,74,0.12)":hol?"rgba(220,38,38,0.04)":"#fff",border:isT?"1.5px solid rgba(22,163,74,0.5)":"1px solid rgba(0,0,0,0.06)",opacity:c.out?0.25:1}}>
+          <div style={{fontSize:10,fontWeight:isT?900:600,color:isT?"#16a34a":sun?"#dc2626":hol?"#dc2626":"#1a2e1a",fontFamily:"ui-monospace,monospace",marginBottom:1}}>
+            {c.d.getDate()}{isTest&&<span style={{color:"#d97706"}}>★</span>}{hol&&!sun&&<span style={{color:"#dc2626",fontSize:7}}>🔴</span>}
           </div>
           {inR&&hasSome&&(<div style={{display:"flex",flexDirection:"column",gap:1}}>
             {pD>0&&<div style={{fontSize:7,color:"#2563eb",fontWeight:700,background:"rgba(37,99,235,0.08)",borderRadius:2,padding:"0 2px"}}>P{pD}</div>}
             {uD>0&&<div style={{fontSize:7,color:"#7c3aed",fontWeight:700,background:"rgba(124,58,237,0.08)",borderRadius:2,padding:"0 2px"}}>U{uD}</div>}
             {hasBrain&&<div style={{fontSize:7,color:"#16a34a"}}>📚</div>}
           </div>)}
-          {inR&&sun&&!hasSome&&<div style={{fontSize:7,color:"#2563eb"}}>50%</div>}
+          {inR&&!hasSome&&(sat||sun||hol)&&<div style={{fontSize:7,color:"#2563eb"}}>{sat?"25%":"50%"}</div>}
         </div>);
       })}
     </div>
