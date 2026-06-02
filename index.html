@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v2.3</title>
+<title>단련 v2.4</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -25,7 +25,7 @@ button,input{font-family:inherit;outline:none}
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
-const VER="v2.3";
+const VER="v2.4";
 
 const START=new Date(2026,3,18);const END=new Date(2026,11,31);
 const RSTART=new Date(2026,4,25); // 러닝 시작일 5/25
@@ -146,7 +146,7 @@ function App(){
   const tog=useCallback(k=>{uLog(aD,{[k]:!tl[k]});if(navigator.vibrate)navigator.vibrate(25)},[aD,tl]);
   const addC=useCallback((k,mx)=>{uLog(aD,{[k]:Math.min((tl[k]||0)+1,mx)});if(navigator.vibrate)navigator.vibrate(25)},[aD,tl]);
   const subC=useCallback(k=>{if((tl[k]||0)===0)return;uLog(aD,{[k]:tl[k]-1})},[aD,tl]);
-  const svBT=(d,p,u)=>setT(pr=>{const n={...pr,[d]:{p:parseInt(p)||0,u:parseInt(u)||0}};sv(K2,n);return n});
+  const svBT=(d,p,u)=>setT(pr=>{const n={...pr};if(p===null){delete n[d]}else{n[d]={p:parseInt(p)||0,u:parseInt(u)||0}};sv(K2,n);return n});
 
   const wk=wkRunStats(R,now);
   const rM=now.getMonth()+1;const rPlan=useMemo(()=>actPlan(rM,T),[rM,T]);
@@ -537,8 +537,10 @@ function CalTab({L,R,cM,setCM,td,onSel}){
 /* ═══ 테스트 탭 ═══ */
 function TstTab({T,svT,fc,RT,setRT,td,goals}){
   const[ip,setIp]=useState("");const[iu,setIu]=useState("");const[s1,setS1]=useState(false);
+  const[tDate,setTDate]=useState(td); // 기록할 날짜
   const[rTy,setRTy]=useState("5K");const[rTm,setRTm]=useState("");const[s2,setS2]=useState(false);
-  const h1=()=>{if(!ip&&!iu)return;svT(td,ip,iu);setIp("");setIu("");setS1(true);setTimeout(()=>setS1(false),2000)};
+  const h1=()=>{if(!ip&&!iu)return;svT(tDate,ip,iu);setIp("");setIu("");setS1(true);setTimeout(()=>setS1(false),2000)};
+  const delTest=(date)=>{svT(date,null,null)};
   const h2=()=>{if(!rTm)return;setRT(p=>[...p,{type:rTy,time:rTm,date:td}]);setRTm("");setS2(true);setTimeout(()=>setS2(false),2000)};
   const t5=RT.filter(t=>t.type==="5K").sort((a,b)=>b.date.localeCompare(a.date));
   const t10=RT.filter(t=>t.type==="10K").sort((a,b)=>b.date.localeCompare(a.date));
@@ -555,12 +557,19 @@ function TstTab({T,svT,fc,RT,setRT,td,goals}){
 
     {/* 상체 맥스 */}
     <div style={S.cd}><div style={{color:"#d97706",fontSize:12,fontWeight:800,marginBottom:8}}>💪 상체 맥스</div>
+      <div style={{marginBottom:8}}>
+        <div style={{fontSize:10,fontWeight:700,marginBottom:3,color:"#6b7c6b"}}>기록 날짜 선택</div>
+        <select value={tDate} onChange={e=>setTDate(e.target.value)} style={{...S.inp,appearance:"auto"}}>
+          <option value={td}>오늘 ({td})</option>
+          {BT.map(t=>(<option key={t.d} value={t.d}>{t.d} (P{t.t.p}·U{t.t.u})</option>))}
+        </select>
+      </div>
       <div style={{display:"flex",gap:8,marginBottom:8}}>
         <input type="number" placeholder="푸시업" value={ip} onChange={e=>setIp(e.target.value)} style={S.inp}/>
         <input type="number" placeholder="풀업" value={iu} onChange={e=>setIu(e.target.value)} style={S.inp}/>
       </div>
-      {s1?<div style={{textAlign:"center",padding:10,color:"#16a34a",fontWeight:800}}>✓</div>
-      :<button onClick={h1} style={{...S.bt,width:"100%",background:"#d97706",color:"#fff",border:"none",fontWeight:800}}>저장</button>}
+      {s1?<div style={{textAlign:"center",padding:10,color:"#16a34a",fontWeight:800}}>✓ {tDate}에 저장!</div>
+      :<button onClick={h1} style={{...S.bt,width:"100%",background:"#d97706",color:"#fff",border:"none",fontWeight:800}}>💾 {tDate} 기준으로 저장</button>}
     </div>
 
     {/* 러닝 테스트 */}
@@ -617,9 +626,18 @@ function TstTab({T,svT,fc,RT,setRT,td,goals}){
         return(<div key={t.d} style={{display:"flex",alignItems:"center",gap:6,padding:"4px 8px",borderRadius:5,border:"1px solid rgba(0,0,0,0.04)",marginBottom:2}}>
           <div style={{width:36,fontSize:9,color:"#6b7c6b",fontWeight:700,fontFamily:"ui-monospace,monospace"}}>{t.d.slice(5)}</div>
           <div style={{flex:1,fontSize:9,color:"#6b7c6b"}}>P{t.t.p}·U{t.t.u}</div>
-          {r?<span style={{fontSize:9,fontWeight:800}}><span style={{color:r.p>=t.t.p?"#16a34a":"#dc2626"}}>P{r.p}</span>·<span style={{color:r.u>=t.t.u?"#16a34a":"#dc2626"}}>U{r.u}</span></span>
+          {r?<><span style={{fontSize:9,fontWeight:800}}><span style={{color:r.p>=t.t.p?"#16a34a":"#dc2626"}}>P{r.p}</span>·<span style={{color:r.u>=t.t.u?"#16a34a":"#dc2626"}}>U{r.u}</span></span>
+            <button onClick={()=>delTest(t.d)} style={{background:"none",border:"none",color:"#dc2626",fontSize:9,cursor:"pointer",padding:"0 4px"}}>✕</button></>
           :<span style={{color:isP?"#dc2626":"#8a9b8a",fontSize:8}}>{isP?"미측정":"예정"}</span>}
         </div>)})}
+      {/* 스케줄 외 날짜에 기록된 테스트 */}
+      {Object.entries(T).filter(([d])=>!BT.some(t=>t.d===d)&&T[d]).map(([d,r])=>(
+        <div key={d} style={{display:"flex",alignItems:"center",gap:6,padding:"4px 8px",borderRadius:5,border:"1px solid rgba(220,38,38,0.2)",background:"rgba(220,38,38,0.04)",marginBottom:2}}>
+          <div style={{width:36,fontSize:9,color:"#dc2626",fontWeight:700,fontFamily:"ui-monospace,monospace"}}>{d.slice(5)}</div>
+          <div style={{flex:1,fontSize:9,color:"#dc2626"}}>스케줄 외 기록</div>
+          <span style={{fontSize:9,fontWeight:800}}>P{r.p}·U{r.u}</span>
+          <button onClick={()=>delTest(d)} style={{background:"none",border:"none",color:"#dc2626",fontSize:9,cursor:"pointer",padding:"0 4px"}}>✕삭제</button>
+        </div>))}
     </div>
     <div style={{height:160}}/>
   </div>);
