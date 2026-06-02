@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v2.4</title>
+<title>단련 v3.0</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -25,12 +25,14 @@ button,input{font-family:inherit;outline:none}
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
-const VER="v2.4";
+const VER="v3.0";
 
 const START=new Date(2026,3,18);const END=new Date(2026,11,31);
-const RSTART=new Date(2026,4,25); // 러닝 시작일 5/25
+const RSTART=new Date(2026,5,1); // 러닝 시작 6/1
+const REND=new Date(2027,4,31); // 러닝 목표 2027.5월
+const G10K=54; // 10K 54분 (2027.5월)
 const TARGET={p:80,u:20};const INIT={p:30,u:10};
-const G5K=30;const G10K=55;
+const G5K=27; // 5K 27분 (중간 목표)
 
 /* ═══ 상체 플랜 ═══ */
 const BP={
@@ -52,32 +54,35 @@ const BT=[
   {d:"2026-12-26",t:{p:80,u:20}},
 ];
 
-/* ═══ 인터벌 플랜 (Billat 2001 + Seiler 2004 + Esfarjani 2007) ═══
-   목표: 10K 55분 (5:30/km)
-   Phase1(5-6): 짧은 인터벌→신경근 적응 (Billat)
-   Phase2(7-8): 4×4분 VO2max 프로토콜 (Seiler gold standard)
-   Phase3(9-10): 레이스 페이스 특이성 (Esfarjani)
-   Phase4(11-12): 샤프닝+유지 */
+/* ═══ 인터벌 (Billat01+Seiler04+Esfarjani07) 목표:2027.5 10K54분 ═══ */
 const IV={
-  5:{set:"200m × 8",rest:"200m 조깅",pace:"4:30~4:50",tot:22,note:"짧고 빠르게 · 신경근 깨우기",phase:"Phase1"},
-  6:{set:"400m × 6",rest:"200m 조깅",pace:"4:40~5:00",tot:28,note:"400m 반복 · 기초 스피드",phase:"Phase1"},
-  7:{set:"4분 × 4",rest:"3분 조깅",pace:"5:00~5:10",tot:30,note:"Seiler 4×4 프로토콜 · VO2max↑",phase:"Phase2"},
-  8:{set:"800m × 5",rest:"400m 조깅",pace:"4:50~5:10",tot:32,note:"800m 반복 · VO2max 핵심",phase:"Phase2"},
-  9:{set:"1000m × 4",rest:"400m 조깅",pace:"5:10~5:20",tot:34,note:"레이스 페이스 근접 · 특이성",phase:"Phase3"},
-  10:{set:"1000m × 5",rest:"400m 조깅",pace:"5:15~5:25",tot:38,note:"볼륨↑ · 5:20 유지력",phase:"Phase3"},
-  11:{set:"1200m × 4",rest:"400m 조깅",pace:"5:20~5:30",tot:36,note:"레이스 시뮬레이션",phase:"Phase4"},
-  12:{set:"2000m × 3",rest:"600m 조깅",pace:"5:25~5:35",tot:35,note:"최종 다듬기 · 자신감",phase:"Phase4"},
+  6:{set:"200m×8",rest:"200m조깅",pace:"4:30~4:50",tot:22,note:"신경근 깨우기",phase:"P1 적응"},
+  7:{set:"400m×6",rest:"200m조깅",pace:"4:40~5:00",tot:28,note:"기초 스피드",phase:"P1 적응"},
+  8:{set:"4분×4",rest:"3분조깅",pace:"5:00~5:10",tot:30,note:"Seiler 4×4·VO2max↑",phase:"P2 VO2max"},
+  9:{set:"800m×5",rest:"400m조깅",pace:"4:50~5:10",tot:32,note:"VO2max 핵심",phase:"P2 VO2max"},
+  10:{set:"1000m×4",rest:"400m조깅",pace:"5:10~5:20",tot:34,note:"레이스 페이스",phase:"P3 특이성"},
+  11:{set:"1000m×5",rest:"400m조깅",pace:"5:15~5:25",tot:38,note:"5:20 유지력",phase:"P3 특이성"},
+  12:{set:"1200m×4",rest:"400m조깅",pace:"5:20~5:30",tot:36,note:"레이스 시뮬",phase:"P4 볼륨"},
+  1:{set:"1200m×5",rest:"400m조깅",pace:"5:15~5:25",tot:40,note:"볼륨 피크",phase:"P4 볼륨"},
+  2:{set:"2000m×3",rest:"600m조깅",pace:"5:20~5:30",tot:38,note:"레이스 리허설",phase:"P5 실전"},
+  3:{set:"2km×3+1km×2",rest:"600m/400m",pace:"5:20~5:30",tot:40,note:"혼합 실전대비",phase:"P5 실전"},
+  4:{set:"1000m×4",rest:"400m조깅",pace:"5:20~5:25",tot:32,note:"샤프닝",phase:"P6 테이퍼"},
+  5:{set:"800m×3",rest:"400m조깅",pace:"5:15~5:20",tot:25,note:"최종→10K54분",phase:"P6 테이퍼"},
 };
 
-/* ═══ 월 1회 러닝 테스트 (매월 마지막 토요일 확정) ═══ */
+/* ═══ 러닝 테스트 (매월 마지막 토, 7월~내년5월) ═══ */
 const RT_DATES=[
-  {d:"2026-06-27",label:"6월 첫 5K",type:"5K"},
-  {d:"2026-07-25",label:"7월 5K",type:"5K"},
-  {d:"2026-08-29",label:"8월 5K+첫 10K",type:"5K+10K"},
-  {d:"2026-09-26",label:"9월 5K",type:"5K"},
-  {d:"2026-10-31",label:"10월 5K",type:"5K"},
-  {d:"2026-11-28",label:"11월 5K+10K",type:"5K+10K"},
-  {d:"2026-12-26",label:"12월 최종 5K+10K🏁",type:"5K+10K"},
+  {d:"2026-07-25",label:"7월 첫 5K",type:"5K"},
+  {d:"2026-08-29",label:"8월 5K",type:"5K"},
+  {d:"2026-09-26",label:"9월 5K+첫10K",type:"5K+10K"},
+  {d:"2026-10-31",label:"10월 10K",type:"10K"},
+  {d:"2026-11-28",label:"11월 10K",type:"10K"},
+  {d:"2026-12-26",label:"12월 10K",type:"10K"},
+  {d:"2027-01-30",label:"1월 10K",type:"10K"},
+  {d:"2027-02-27",label:"2월 10K",type:"10K"},
+  {d:"2027-03-27",label:"3월 10K",type:"10K"},
+  {d:"2027-04-26",label:"4월 리허설10K",type:"10K"},
+  {d:"2027-05-24",label:"5월 최종10K🏁",type:"10K"},
 ];
 
 const HOL=new Set(["2026-01-01","2026-01-29","2026-01-30","2026-01-31","2026-03-01","2026-05-05","2026-05-24","2026-06-06","2026-08-15","2026-09-24","2026-09-25","2026-09-26","2026-10-03","2026-10-09","2026-12-25"]);
@@ -92,7 +97,7 @@ const dayR=ds=>{const d=new Date(ds);const w=d.getDay();if(w===6)return{r:0.25,l
 const wkMon=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return new Date(x.getFullYear(),x.getMonth(),x.getDate())};
 
 // 기존 4개 키 100% 유지
-const K1="gtg-v4-logs",K2="gtg-v4-tests",K3="rk2-runs",K4="rk2-tests";
+const K1="gtg-v4-logs",K2="gtg-v4-tests",K3="rk3-runs",K4="rk3-tests";
 const ld=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 
@@ -107,9 +112,11 @@ function actPlan(mo,T){
   const ti=BT.find(t=>t.d===td);
   const tP=ti?ti.t.p:b.max.p,tU=ti?ti.t.u:b.max.u;
   const bh=aP<tP||aU<tU;
+  if(!bh)return{...b,adj:true,behind:false,reason:`${td.slice(5)} 통과 (P${aP}·U${aU})`};
+  // 미달시만 조정
   return{...b,set:{p:Math.max(Math.round(aP*0.55),10),u:Math.max(Math.round(aU*0.55),5)},
-    sets:bh?Math.min(b.sets+1,8):b.sets,adj:true,behind:bh,
-    reason:bh?`${td.slice(5)} 미달→세트+1`:`${td.slice(5)} 통과`};
+    sets:Math.min(b.sets+1,8),adj:true,behind:true,
+    reason:`${td.slice(5)} 미달→세트+1, 회수 실측기준`};
 }
 
 // 주간 러닝 통계
@@ -177,22 +184,17 @@ function App(){
       const ds=ymd(c);const wd=c.getDay();
       const isSat=wd===6;const isSun=wd===0;const isH=HOL.has(ds);
       const wkend=isSat||isSun||isH;
-      // 항목별 주말 만점 (푸시업/풀업/영어/요가만 감량, 나머지 동일)
-      const engMx=isSat?1:(isSun||isH)?2:3;
-      const yogMx=isSat?1:(isSun||isH)?1:2;
-      const rdMx=3; // 읽기: 항상 3
+      // 주말/공휴일: 모든 항목 1/4
+      const engMx=wkend?1:3;const yogMx=wkend?1:2;const rdMx=wkend?1:3;const medMx=wkend?1:2;
       const afterRS=c>=RSTART;const runPts=afterRS?2:0;
-      // 두뇌 만점: nf(1)+yoga+med(2)+read(3)+write(1)+eng+run
-      tDays++;brMax+=1+yogMx+2+rdMx+1+engMx+runPts;
+      tDays++;brMax+=1+yogMx+medMx+rdMx+1+engMx+runPts;
       const l=L[ds];const mp=BP[c.getMonth()+1];const run=R[ds];
       if(l&&mp){
-        // 몸: 푸시업/풀업 세트 기준도 주말 반영
-        const bodySets=isSat?1:(isSun||isH)?2:mp.sets;
+        const bodySets=wkend?Math.max(1,Math.round(mp.sets*0.25)):mp.sets;
         if((l.p||0)>=Math.ceil(bodySets*0.5)&&(l.u||0)>=Math.ceil(bodySets*0.5)&&l.plank)bDays++;
-        // 두뇌 점수
         if(l.nf)brEarn+=1;
         const yv=l.yoga===true?1:(l.yoga||0);brEarn+=Math.min(yv,yogMx);
-        brEarn+=Math.min(l.med||0,2);
+        brEarn+=Math.min(l.med||0,medMx);
         brEarn+=Math.min(l.read||0,rdMx);
         if(l.write)brEarn+=1;
         brEarn+=Math.min(l.lang||0,engMx);
@@ -223,7 +225,7 @@ function App(){
     return{
       body:{rate:bR,ok:fcOk&&bR>=0.7,label:"푸시업80 풀업20",color:fcOk&&bR>=0.7?"#16a34a":"#dc2626"},
       brain:{rate:brR,ok:brR>=0.7,label:"전교1등 두뇌",color:brR>=0.7?"#16a34a":"#dc2626"},
-      run:{rate:rRate,ok:rOk,label:"5K30′10K55′",color:rOk?"#16a34a":"#dc2626",
+      run:{rate:rRate,ok:rOk,label:"10K54′(27.5)",color:rOk?"#16a34a":"#dc2626",
         avgRun:Math.round(avgRun*10)/10,avgIntv:Math.round(avgIntv*10)/10,
         latest5K,latest10K},
       brEarn,brMax};
@@ -273,20 +275,18 @@ function RecTab({plan,tl,aD,isT,pP,pU,nxBT,td,tmr,now,goals,fc,add,sub,tog,addC,
   const d=new Date(aD);const dw=DN[d.getDay()];const wd=d.getDay();
   const isSat=wd===6;const isSun=wd===0;const isHol=HOL.has(aD);
   const rd=isSat||isSun||isHol;
-  const wL=isSat?"토 1/4":isSun?"일 1/2":isHol?"공휴일 1/2":"";
+  const wL=isSat?"토 1/4":isSun?"일 1/4":isHol?"공휴일 1/4":"";
 
-  // 푸시업/풀업: 토 1세트, 일/공휴일 2세트, 평일 원래
-  const aS=isSat?1:(isSun||isHol)?2:plan.sets;
-  // 영어: 토 15분×1회, 일/공휴일 15분×2회, 평일 20분×3회
-  const engMin=isSat?15:(isSun||isHol)?15:20;
-  const engMax=isSat?1:(isSun||isHol)?2:3;
-  const engLabel=isSat?"15분×1회":(isSun||isHol)?"15분×2회":"20분×3회";
-  // 요가: 토 5분×1회, 일/공휴일 10분×1회, 평일 10분×2회
-  const yogMin=isSat?5:(isSun||isHol)?10:10;
-  const yogMax=isSat?1:(isSun||isHol)?1:2;
-  const yogLabel=isSat?"5분×1회":(isSun||isHol)?"10분×1회":"10분×2회";
-  // 읽기/명상/쓰기/NF/복근: 주말도 동일
-  const rdMax=3;
+  // 토+일+공휴일: 모든 항목 1/4
+  const aS=rd?Math.max(1,Math.round(plan.sets*0.25)):plan.sets;
+  const engMax=rd?1:3;
+  const engLabel=rd?"15분×1회":"20분×3회";
+  const yogMax=rd?1:2;
+  const yogLabel=rd?"5분×1회":"10분×2회";
+  const rdMax=rd?1:3;
+  const rdLabel=rd?"20분×1회":"20분×3회";
+  const medMax=rd?1:2;
+  const medLabel=rd?"10분×1회":"10분이상×2회";
 
   const aPP=Math.min(100,(tl.p/aS)*100),aPU=Math.min(100,(tl.u/aS)*100);
   const rr=rd?" ("+wL+")":"";
@@ -294,7 +294,7 @@ function RecTab({plan,tl,aD,isT,pP,pU,nxBT,td,tmr,now,goals,fc,add,sub,tog,addC,
     <div style={{display:"flex",flexDirection:"column",gap:10}}>
       <DNav d={d} dw={dw} isT={isT} aD={aD} tmr={tmr} go={go} goT={goT}/>
       {rd&&<div style={{...S.cd,padding:9,borderLeft:"4px solid #2563eb",background:"rgba(37,99,235,0.04)"}}>
-        <div style={{color:"#2563eb",fontSize:11,fontWeight:800}}>🌿 {wL} · 푸시업/풀업/영어/요가만 감량</div></div>}
+        <div style={{color:"#2563eb",fontSize:11,fontWeight:800}}>🌿 {wL} · 모든 훈련 감량</div></div>}
       {plan.adj&&plan.reason&&<div style={{...S.cd,padding:9,borderLeft:`4px solid ${plan.behind?"#d97706":"#16a34a"}`}}>
         <div style={{color:plan.behind?"#b45309":"#16a34a",fontSize:10,fontWeight:800}}>{plan.behind?"⚙ ":"✓ "}{plan.reason}</div></div>}
 
@@ -304,8 +304,8 @@ function RecTab({plan,tl,aD,isT,pP,pU,nxBT,td,tmr,now,goals,fc,add,sub,tog,addC,
       <Ck i="💪" l="복근운동" s="1회" dn={tl.plank} co="#d97706" oT={()=>tog("plank")}/>
 
       <GH g={goals.brain} det={`${goals.brEarn}/${goals.brMax}`}/>
-      <MC l="🧘 명상" s="10분이상×2회" c={tl.med||0} mx={2} co="#0891b2" oA={()=>addC("med",2)} oS={()=>subC("med")}/>
-      <MC l="📖 읽기" s="20분×3회" c={tl.read||0} mx={rdMax} co="#0d9488" oA={()=>addC("read",rdMax)} oS={()=>subC("read")}/>
+      <MC l="🧘 명상" s={`${medLabel}${rr}`} c={tl.med||0} mx={medMax} co="#0891b2" oA={()=>addC("med",medMax)} oS={()=>subC("med")}/>
+      <MC l="📖 읽기" s={`${rdLabel}${rr}`} c={tl.read||0} mx={rdMax} co="#0d9488" oA={()=>addC("read",rdMax)} oS={()=>subC("read")}/>
       <Ck i="✏️" l="쓰기" s="20분" dn={tl.write} co="#6366f1" oT={()=>tog("write")}/>
       <MC l="🗣️ 영어 말하기" s={`${engLabel}${rr}`} c={tl.lang||0} mx={engMax} co="#2563eb" oA={()=>addC("lang",engMax)} oS={()=>subC("lang")}/>
       <Ck i="🔖" l="N.F." s="" dn={tl.nf} co="#a855f7" oT={()=>tog("nf")}/>
@@ -416,8 +416,8 @@ function RunTab({R,setR,td,now,wk,aD,go,goT,isT,tmr,goals,nxRT}){
       </div>}
 
       <div style={{...S.inf,textAlign:"center",lineHeight:1.6}}>
-        5/25 시작 · 주 3회 러닝(30분+) + 1회 인터벌<br/>
-        러닝 완료 → 전교1등 두뇌 +2점/일<br/>
+        6월 시작 · 주 3회 러닝(30분+) + 1회 인터벌<br/>
+        목표: 2027.5 10K 54분<br/>
         <span style={{fontSize:8,color:"#8a9b8a"}}>Billat 2001, Seiler 2004, Esfarjani 2007</span>
       </div>
       <div style={{height:160}}/>
@@ -523,7 +523,7 @@ function CalTab({L,R,cM,setCM,td,onSel}){
             {hBr&&<div style={{width:5,height:5,borderRadius:3,background:"#16a34a"}}/>}
             {run&&<div style={{width:5,height:5,borderRadius:3,background:run.type==="인터벌"?"#d97706":"#0891b2"}}/>}
           </div>}
-          {inR&&!hB&&!hBr&&!run&&(sat||sun||hl)&&<div style={{fontSize:6,color:"#2563eb"}}>{sat?"25%":"50%"}</div>}
+          {inR&&!hB&&!hBr&&!run&&(sat||sun||hl)&&<div style={{fontSize:6,color:"#2563eb"}}>1/4</div>}
         </div>);
       })}
     </div>
