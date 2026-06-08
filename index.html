@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v3.3</title>
+<title>단련 v3.4</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -25,7 +25,7 @@ button,input{font-family:inherit;outline:none}
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
-const VER="v3.3";
+const VER="v3.4";
 
 const START=new Date(2026,3,18);const END=new Date(2026,11,31);
 const RSTART=new Date(2026,5,1); // 러닝 시작 6/1
@@ -97,7 +97,7 @@ const dayR=ds=>{const d=new Date(ds);const w=d.getDay();if(w===6)return{r:0.25,l
 const wkMon=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return new Date(x.getFullYear(),x.getMonth(),x.getDate())};
 
 // 기존 4개 키 100% 유지
-const K1="gtg-v4-logs",K2="gtg-v4-tests",K3="rk3-runs",K4="rk3-tests";
+const K1="gtg-v4-logs",K2="gtg-v4-tests",K3="rk4-runs",K4="rk4-tests";
 const ld=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 
@@ -221,10 +221,13 @@ function App(){
     const rRate=hasAnyRun?Math.min((avgRun/4+avgIntv)/2,1):1;
     const rOk=hasAnyRun?(runConsist&&(testOk5!==false)&&(testOk10!==false)):true;
 
+    // 러닝 데이터 없으면 강제 100%
+    const finalRRate=(runsAfterStart.length===0&&RT.length===0)?1:rRate;
+    const finalROk=(runsAfterStart.length===0&&RT.length===0)?true:rOk;
     return{
       body:{rate:bR,ok:fcOk&&bR>=0.7,label:"푸시업80 풀업20",color:fcOk&&bR>=0.7?"#16a34a":"#dc2626"},
       brain:{rate:brR,ok:brR>=0.7,label:"전교1등 두뇌",color:brR>=0.7?"#16a34a":"#dc2626"},
-      run:{rate:rRate,ok:rOk,label:"10K54′(27.5)",color:rOk?"#16a34a":"#dc2626",
+      run:{rate:finalRRate,ok:finalROk,label:"10K54′(27.5)",color:finalROk?"#16a34a":"#dc2626",
         avgRun:Math.round(avgRun*10)/10,avgIntv:Math.round(avgIntv*10)/10,
         latest5K,latest10K},
       brEarn,brMax};
