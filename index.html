@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v3.4</title>
+<title>단련 v3.5</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -25,7 +25,7 @@ button,input{font-family:inherit;outline:none}
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
-const VER="v3.4";
+const VER="v3.5";
 
 const START=new Date(2026,3,18);const END=new Date(2026,11,31);
 const RSTART=new Date(2026,5,1); // 러닝 시작 6/1
@@ -202,34 +202,38 @@ function App(){
       c.setDate(c.getDate()+1)}
     const bR=tDays>0?bDays/tDays:0;const brR=brMax>0?brEarn/brMax:0;
 
-    // 러닝: 최근 4주 실제 기록 (5/25 이후만)
-    let rW=0,rTot=0,rIntv=0;
-    for(let w=0;w<4;w++){const m=addD(wkMon(now),-w*7);let wr=0,wi=0;
-      for(let i=0;i<7;i++){const dd=addD(m,i);if(dd<RSTART)continue;const r=R[ymd(dd)];if(r){wr++;if(r.type==="인터벌")wi++}}
-      rW++;rTot+=wr;rIntv+=wi}
-    const avgRun=rW>0?rTot/rW:0;const avgIntv=rW>0?rIntv/rW:0;
-    // 러닝: RSTART 이후 기록이 하나도 없으면 100%
-    const runsAfterStart=Object.entries(R).filter(([d])=>new Date(d)>=RSTART);
-    const hasAnyRun=runsAfterStart.length>0;
-    const runConsist=!hasAnyRun||(avgRun>=3.5&&avgIntv>=0.5);
+    // 러닝: 완료된 주 중 루틴 달성 비율
+    // 러닝: 완료된 주 중 루틴 달성 비율 (주3런+1인터벌 = 달성)
+    // 아직 완료된 주가 없으면 100%
+    const rStartDs=ymd(RSTART);
+    let goodWeeks=0,totalWeeks=0;
+    const firstMon=wkMon(RSTART);
+    let wPtr=new Date(firstMon);
+    const curMon=wkMon(now);
+    while(wPtr<curMon){ // 현재 주는 제외 (진행 중)
+      const wEnd=addD(wPtr,6);
+      if(wEnd>=RSTART){ // RSTART 이후 주만
+        totalWeeks++;
+        let wr=0,wi=0;
+        for(let i=0;i<7;i++){const dd=addD(wPtr,i);if(dd<RSTART)continue;
+          const r=R[ymd(dd)];if(r){wr++;if(r.type==="인터벌")wi++}}
+        if(wr>=3&&wi>=1)goodWeeks++;
+      }
+      wPtr=addD(wPtr,7);
+    }
+    const rRate=totalWeeks>0?goodWeeks/totalWeeks:1;
+    const rOk=rRate>=0.7;
+
     const t5=RT.filter(t=>t.type==="5K").sort((a,b)=>b.date.localeCompare(a.date));
     const t10=RT.filter(t=>t.type==="10K").sort((a,b)=>b.date.localeCompare(a.date));
     const latest5K=t5.length?parseFloat(t5[0].time):null;
     const latest10K=t10.length?parseFloat(t10[0].time):null;
-    const testOk5=latest5K!==null?latest5K<=G5K:null;
-    const testOk10=latest10K!==null?latest10K<=G10K:null;
-    const rRate=hasAnyRun?Math.min((avgRun/4+avgIntv)/2,1):1;
-    const rOk=hasAnyRun?(runConsist&&(testOk5!==false)&&(testOk10!==false)):true;
 
-    // 러닝 데이터 없으면 강제 100%
-    const finalRRate=(runsAfterStart.length===0&&RT.length===0)?1:rRate;
-    const finalROk=(runsAfterStart.length===0&&RT.length===0)?true:rOk;
     return{
       body:{rate:bR,ok:fcOk&&bR>=0.7,label:"푸시업80 풀업20",color:fcOk&&bR>=0.7?"#16a34a":"#dc2626"},
       brain:{rate:brR,ok:brR>=0.7,label:"전교1등 두뇌",color:brR>=0.7?"#16a34a":"#dc2626"},
-      run:{rate:finalRRate,ok:finalROk,label:"10K54′(27.5)",color:finalROk?"#16a34a":"#dc2626",
-        avgRun:Math.round(avgRun*10)/10,avgIntv:Math.round(avgIntv*10)/10,
-        latest5K,latest10K},
+      run:{rate:rRate,ok:rOk,label:"10K54′(27.5)",color:rOk?"#16a34a":"#dc2626",
+        goodWeeks,totalWeeks,latest5K,latest10K},
       brEarn,brMax};
   },[L,fcOk,R,RT]);
 
@@ -341,7 +345,7 @@ function RunTab({R,setR,td,now,wk,aD,go,goT,isT,tmr,goals,nxRT}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
           <div style={{fontSize:13,fontWeight:800}}>이번 주</div>
           <div style={{color:goals.run.ok?"#16a34a":"#dc2626",fontSize:10,fontWeight:800}}>
-            {Object.entries(R).filter(([d])=>new Date(d)>=RSTART).length===0?"✓ 새 출발 · 첫 러닝을 기록하세요":`최근4주 ${goals.run.avgRun}회/주 · 인터벌 ${goals.run.avgIntv}회/주`}
+            {goals.run.totalWeeks===0?"✓ 새 출발 · 이번 주부터 시작":`${goals.run.goodWeeks}/${goals.run.totalWeeks}주 달성 (${Math.round(goals.run.rate*100)}%)`}
           </div>
         </div>
         <div style={{display:"flex",gap:6,justifyContent:"center",alignItems:"center"}}>
