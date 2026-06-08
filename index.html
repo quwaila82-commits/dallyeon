@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v3.2</title>
+<title>단련 v3.3</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -25,7 +25,7 @@ button,input{font-family:inherit;outline:none}
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
-const VER="v3.2";
+const VER="v3.3";
 
 const START=new Date(2026,3,18);const END=new Date(2026,11,31);
 const RSTART=new Date(2026,5,1); // 러닝 시작 6/1
@@ -208,8 +208,9 @@ function App(){
       for(let i=0;i<7;i++){const dd=addD(m,i);if(dd<RSTART)continue;const r=R[ymd(dd)];if(r){wr++;if(r.type==="인터벌")wi++}}
       rW++;rTot+=wr;rIntv+=wi}
     const avgRun=rW>0?rTot/rW:0;const avgIntv=rW>0?rIntv/rW:0;
-    // 러닝 기록이 아직 없으면 100% (새 출발)
-    const hasAnyRun=Object.keys(R).length>0;
+    // 러닝: RSTART 이후 기록이 하나도 없으면 100%
+    const runsAfterStart=Object.entries(R).filter(([d])=>new Date(d)>=RSTART);
+    const hasAnyRun=runsAfterStart.length>0;
     const runConsist=!hasAnyRun||(avgRun>=3.5&&avgIntv>=0.5);
     const t5=RT.filter(t=>t.type==="5K").sort((a,b)=>b.date.localeCompare(a.date));
     const t10=RT.filter(t=>t.type==="10K").sort((a,b)=>b.date.localeCompare(a.date));
@@ -217,8 +218,8 @@ function App(){
     const latest10K=t10.length?parseFloat(t10[0].time):null;
     const testOk5=latest5K!==null?latest5K<=G5K:null;
     const testOk10=latest10K!==null?latest10K<=G10K:null;
-    const rRate=!hasAnyRun?1:Math.min((avgRun/4+avgIntv)/2,1);
-    const rOk=runConsist&&(testOk5!==false)&&(testOk10!==false);
+    const rRate=hasAnyRun?Math.min((avgRun/4+avgIntv)/2,1):1;
+    const rOk=hasAnyRun?(runConsist&&(testOk5!==false)&&(testOk10!==false)):true;
 
     return{
       body:{rate:bR,ok:fcOk&&bR>=0.7,label:"푸시업80 풀업20",color:fcOk&&bR>=0.7?"#16a34a":"#dc2626"},
@@ -337,7 +338,7 @@ function RunTab({R,setR,td,now,wk,aD,go,goT,isT,tmr,goals,nxRT}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
           <div style={{fontSize:13,fontWeight:800}}>이번 주</div>
           <div style={{color:goals.run.ok?"#16a34a":"#dc2626",fontSize:10,fontWeight:800}}>
-            {Object.keys(R).length===0?"새 출발 · 첫 러닝을 기록하세요":`최근4주 ${goals.run.avgRun}회/주 · 인터벌 ${goals.run.avgIntv}회/주`}
+            {Object.entries(R).filter(([d])=>new Date(d)>=RSTART).length===0?"✓ 새 출발 · 첫 러닝을 기록하세요":`최근4주 ${goals.run.avgRun}회/주 · 인터벌 ${goals.run.avgIntv}회/주`}
           </div>
         </div>
         <div style={{display:"flex",gap:6,justifyContent:"center",alignItems:"center"}}>
