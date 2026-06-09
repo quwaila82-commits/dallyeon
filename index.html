@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v3.5</title>
+<title>단련 v3.6</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -25,7 +25,7 @@ button,input{font-family:inherit;outline:none}
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
-const VER="v3.5";
+const VER="v3.6";
 
 const START=new Date(2026,3,18);const END=new Date(2026,11,31);
 const RSTART=new Date(2026,5,1); // 러닝 시작 6/1
@@ -203,23 +203,20 @@ function App(){
     const bR=tDays>0?bDays/tDays:0;const brR=brMax>0?brEarn/brMax:0;
 
     // 러닝: 완료된 주 중 루틴 달성 비율
-    // 러닝: 완료된 주 중 루틴 달성 비율 (주3런+1인터벌 = 달성)
-    // 아직 완료된 주가 없으면 100%
-    const rStartDs=ymd(RSTART);
+    // 러닝: 첫 기록한 주부터 카운트, 기록 전 100%
+    const allRunDates=Object.keys(R).filter(d=>new Date(d)>=RSTART).sort();
     let goodWeeks=0,totalWeeks=0;
-    const firstMon=wkMon(RSTART);
-    let wPtr=new Date(firstMon);
-    const curMon=wkMon(now);
-    while(wPtr<curMon){ // 현재 주는 제외 (진행 중)
-      const wEnd=addD(wPtr,6);
-      if(wEnd>=RSTART){ // RSTART 이후 주만
+    if(allRunDates.length>0){
+      const firstRunMon=wkMon(new Date(allRunDates[0]));
+      const curMon=wkMon(now);
+      let wPtr=new Date(firstRunMon);
+      while(wPtr<curMon){
         totalWeeks++;
         let wr=0,wi=0;
-        for(let i=0;i<7;i++){const dd=addD(wPtr,i);if(dd<RSTART)continue;
-          const r=R[ymd(dd)];if(r){wr++;if(r.type==="인터벌")wi++}}
+        for(let i=0;i<7;i++){const r=R[ymd(addD(wPtr,i))];if(r){wr++;if(r.type==="인터벌")wi++}}
         if(wr>=3&&wi>=1)goodWeeks++;
+        wPtr=addD(wPtr,7);
       }
-      wPtr=addD(wPtr,7);
     }
     const rRate=totalWeeks>0?goodWeeks/totalWeeks:1;
     const rOk=rRate>=0.7;
@@ -345,7 +342,7 @@ function RunTab({R,setR,td,now,wk,aD,go,goT,isT,tmr,goals,nxRT}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
           <div style={{fontSize:13,fontWeight:800}}>이번 주</div>
           <div style={{color:goals.run.ok?"#16a34a":"#dc2626",fontSize:10,fontWeight:800}}>
-            {goals.run.totalWeeks===0?"✓ 새 출발 · 이번 주부터 시작":`${goals.run.goodWeeks}/${goals.run.totalWeeks}주 달성 (${Math.round(goals.run.rate*100)}%)`}
+            {goals.run.totalWeeks===0?"✓ 100% · 첫 러닝부터 카운트 시작":`${goals.run.goodWeeks}/${goals.run.totalWeeks}주 달성 (${Math.round(goals.run.rate*100)}%)`}
           </div>
         </div>
         <div style={{display:"flex",gap:6,justifyContent:"center",alignItems:"center"}}>
