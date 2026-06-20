@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v4.1</title>
+<title>단련 v4.2</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -20,15 +20,15 @@ button,input{font-family:inherit;outline:none}
 <body>
 <div id="root" style="padding:20px;font-family:sans-serif;color:#1a2e1a">로딩 중...</div>
 <script>window.onerror=function(m,s,l,c,e){document.getElementById("root").innerHTML='<div style="padding:20px;color:red"><h3>오류 발생</h3><p>'+m+'</p><p>Line: '+l+'</p><p>'+String(e)+'</p></div>';return true}</script>
-<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
 <script>if(!window.React)document.getElementById("root").innerHTML='<p style="color:red">React 로드 실패 - 인터넷 연결 확인</p>'</script>
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
 
 /* ===== CONFIG ===== */
-const VER="v4.1";
+const VER="v4.2";
 const START=new Date(2026,3,18), END=new Date(2026,11,31);
 const RSTART=new Date(2026,5,1);
 const TARGET={p:80,u:20}, INIT={p:30,u:10};
