@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#f0f7f0">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>단련 v4.2</title>
+<title>단련 v4.3</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
@@ -28,7 +28,7 @@ button,input{font-family:inherit;outline:none}
 const{useState,useEffect,useMemo,useCallback}=React;
 
 /* ===== CONFIG ===== */
-const VER="v4.2";
+const VER="v4.3";
 const START=new Date(2026,3,18), END=new Date(2026,11,31);
 const RSTART=new Date(2026,5,1);
 const TARGET={p:80,u:20}, INIT={p:30,u:10};
@@ -169,14 +169,14 @@ function App(){
   const c=new Date(START);
   while(c<=now&&c<=END){
    if(!isWE(c)){
-    tD++;brMx+=12+(c>=RSTART?2:0);
+    tD++;brMx+=13+(c>=RSTART?2:0);
     const l=L[ymd(c)];const mp=BP[c.getMonth()+1];const run=R[ymd(c)];
     if(l&&mp){
      if((l.p||0)>=Math.ceil(mp.sets*0.5)&&(l.u||0)>=Math.ceil(mp.sets*0.5)&&l.plank)bD++;
      if(l.nf)brE++;
      const yv=l.yoga===true?1:(l.yoga||0);brE+=Math.min(yv,2);
      brE+=Math.min(l.med||0,2);brE+=Math.min(l.read||0,3);
-     if(l.write)brE++;brE+=Math.min(l.lang||0,3);
+     if(l.write)brE++;brE+=Math.min(l.lang||0,4);
     }
     if(c>=RSTART&&run)brE+=2;
    }
@@ -266,7 +266,7 @@ function Rec({plan,tl,aD,isT,td,tmr,now,goals,fc,af,sf,tg,ac,sc,go,goT}){
      <MC l="🧘 명상" s="10분이상×2회" c={tl.med||0} m={2} co="#0891b2" oA={()=>ac("med",2)} oS={()=>sc("med")}/>
      <MC l="📖 읽기" s="20분×3회" c={tl.read||0} m={3} co="#0d9488" oA={()=>ac("read",3)} oS={()=>sc("read")}/>
      <Ck i="✏️" l="쓰기" s="20분" dn={tl.write} co="#6366f1" oT={()=>tg("write")}/>
-     <MC l="🗣️ 영어 말하기" s="20분×3회" c={tl.lang||0} m={3} co="#2563eb" oA={()=>ac("lang",3)} oS={()=>sc("lang")}/>
+     <MC l="🌐 Foreign Language" s="30분×4회" c={tl.lang||0} m={4} co="#2563eb" oA={()=>ac("lang",4)} oS={()=>sc("lang")}/>
      <Ck i="🔖" l="N.F." s="" dn={tl.nf} co="#a855f7" oT={()=>tg("nf")}/>
      <MC l="🧘‍♀️ 요가/스트레칭" s="10분×2회" c={tl.yoga||0} m={2} co="#16a34a" oA={()=>ac("yoga",2)} oS={()=>sc("yoga")}/>
      <div style={{...S.inf,textAlign:"center"}}>GtG · 실패까지 가지 말 것 · 세트 간 15분+</div>
