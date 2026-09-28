@@ -26,11 +26,11 @@ button,input,select{font-family:inherit;outline:none}
 <script type="text/babel" data-presets="react">
 const{useState,useEffect,useMemo,useCallback}=React;
 
-const VER="S2 v2.0";
-const START=new Date(2026,8,26); // 9/26 시작
-const BEND=new Date(2027,3,30); // 상체 목표 2027.4
-const RSTART=new Date(2026,8,26); // 러닝도 9/26
-const REND=new Date(2027,4,31); // 러닝 목표 2027.5
+const VER="S2 v2.1";
+const START=new Date(2026,8,29); // 9/29 시작
+const BEND=new Date(2027,4,31); // 모든 목표 2027.5
+const RSTART=new Date(2026,8,29);
+const REND=new Date(2027,4,31);
 const ADAPT="2026-10-03"; // 적응기 종료일
 const TARGET={p:80,u:20},INIT={p:48,u:14};
 const G10K=55;
@@ -38,21 +38,22 @@ const WK_TARGET=4; // 주 4회
 
 /* 상체 월별 (Plotkin22+MTI GtG+Nóbrega23, 5세트 50% 디로드) */
 const BP={
- 9:{mx:{p:48,u:14},st:{p:15,u:5},sets:3,ph:"적응기"}, // 부상 회복
- 10:{mx:{p:50,u:15},st:{p:25,u:7},sets:5,ph:"재적응"},
- 11:{mx:{p:54,u:16},st:{p:27,u:8},sets:5,ph:"기초"},
- 12:{mx:{p:58,u:16},st:{p:29,u:8},sets:5,ph:"축적"},
- 1:{mx:{p:62,u:17},st:{p:31,u:9},sets:5,ph:"축적"},
- 2:{mx:{p:67,u:18},st:{p:34,u:9},sets:5,ph:"강화"},
- 3:{mx:{p:73,u:19},st:{p:37,u:10},sets:5,ph:"강화"},
- 4:{mx:{p:80,u:20},st:{p:40,u:10},sets:5,ph:"피크"},
+ 9:{mx:{p:48,u:14},st:{p:15,u:5},sets:3,ph:"적응기"},
+ 10:{mx:{p:52,u:15},st:{p:26,u:7},sets:5,ph:"재적응"},
+ 11:{mx:{p:56,u:16},st:{p:28,u:8},sets:5,ph:"기초"},
+ 12:{mx:{p:60,u:16},st:{p:30,u:8},sets:5,ph:"축적"},
+ 1:{mx:{p:64,u:17},st:{p:32,u:9},sets:5,ph:"축적"},
+ 2:{mx:{p:68,u:18},st:{p:34,u:9},sets:5,ph:"강화"},
+ 3:{mx:{p:72,u:19},st:{p:36,u:10},sets:5,ph:"강화"},
+ 4:{mx:{p:76,u:19},st:{p:38,u:10},sets:5,ph:"피크"},
+ 5:{mx:{p:80,u:20},st:{p:40,u:10},sets:5,ph:"최종"},
 };
 
 const BT=[
- {d:"2026-10-03",t:{p:50,u:15}},{d:"2026-10-31",t:{p:54,u:16}},
- {d:"2026-11-28",t:{p:58,u:16}},{d:"2026-12-27",t:{p:62,u:17}},
- {d:"2027-01-31",t:{p:67,u:18}},{d:"2027-02-27",t:{p:73,u:19}},
- {d:"2027-03-29",t:{p:73,u:19}},{d:"2027-04-26",t:{p:80,u:20}},
+ {d:"2026-10-03",t:{p:52,u:15}},{d:"2026-10-31",t:{p:56,u:16}},
+ {d:"2026-11-28",t:{p:60,u:16}},{d:"2026-12-27",t:{p:64,u:17}},
+ {d:"2027-01-31",t:{p:68,u:18}},{d:"2027-02-27",t:{p:72,u:19}},
+ {d:"2027-03-29",t:{p:76,u:19}},{d:"2027-04-26",t:{p:80,u:20}},
 ];
 
 /* 인터벌 (Billat01+Seiler04+Esfarjani07) */
@@ -112,11 +113,11 @@ function brDay(ds,l,run){
  let e=0,mx=0;
  mx+=1;if(l&&l.nf)e+=1;
  mx+=2;if(l)e+=Math.min(l.med||0,4)*0.5;
- mx+=2;if(l)e+=Math.min(l.yoga||0,7)*(2/7);
+ mx+=2;if(l)e+=Math.min(l.yoga||0,4)*0.5;
  mx+=3;if(l)e+=Math.min(l.read||0,3);
  mx+=1;if(l&&l.write)e+=1;
- mx+=2;if(l)e+=Math.min(l.eng||0,2);
- mx+=4;if(l)e+=Math.min(l.jpn||0,4);
+ mx+=3;if(l)e+=Math.min(l.eng||0,3);
+ mx+=3;if(l)e+=Math.min(l.jpn||0,3);
  if(new Date(ds)>=RSTART){mx+=2;if(run)e+=2}
  return{e,mx};
 }
@@ -190,7 +191,7 @@ function App(){
   const rR=tW>0?gW/tW:1;
 
   return{
-   body:{rate:bR,ok:fcOk&&bR>=0.7,label:"P80 U20",sub:"2027.4",color:fcOk&&bR>=0.7?"#16a34a":"#dc2626"},
+   body:{rate:bR,ok:fcOk&&bR>=0.7,label:"P80 U20",sub:"2027.5",color:fcOk&&bR>=0.7?"#16a34a":"#dc2626"},
    brain:{rate:brR,ok:brR>=0.7,label:"전교1등 두뇌",sub:"2027.5",color:brR>=0.7?"#16a34a":"#dc2626"},
    run:{rate:rR,ok:rR>=0.7,label:"10K 55분",sub:"2027.5",color:rR>=0.7?"#16a34a":"#dc2626",gW,tW},
    brE:Math.round(brE),brMx:Math.round(brMx)};
@@ -256,7 +257,7 @@ function Rec({plan,tl,aD,isT,td,tmr,goals,fc,adapt,af,sf,tg,ac,sc,go,goT}){
 
      <SH t="☀ 아침 루틴" c="#0891b2"/>
      <MC l="🧘 명상" s="3분×4회" c={tl.med||0} m={4} co="#0891b2" oA={()=>ac("med",4)} oS={()=>sc("med")}/>
-     <MC l="🧘‍♀️ 스트레칭" s="3분×7회" c={tl.yoga||0} m={7} co="#16a34a" oA={()=>ac("yoga",7)} oS={()=>sc("yoga")}/>
+     <MC l="🧘‍♀️ 스트레칭" s="5분×4회" c={tl.yoga||0} m={4} co="#16a34a" oA={()=>ac("yoga",4)} oS={()=>sc("yoga")}/>
      <Ck i="✏️" l="쓰기" s="20분" dn={tl.write} co="#6366f1" oT={()=>tg("write")}/>
 
      <SH t={"💪 GtG"+(adapt?" · 데드행+가벼운 세트":"")} c="#2563eb"/>
@@ -266,8 +267,8 @@ function Rec({plan,tl,aD,isT,td,tmr,goals,fc,adapt,af,sf,tg,ac,sc,go,goT}){
 
      <SH t="📚 두뇌" c="#0d9488"/>
      <MC l="📖 읽기" s="20분×3회" c={tl.read||0} m={3} co="#0d9488" oA={()=>ac("read",3)} oS={()=>sc("read")}/>
-     <MC l="🇯🇵 일본어" s="30분×4회 (2h)" c={tl.jpn||0} m={4} co="#dc2626" oA={()=>ac("jpn",4)} oS={()=>sc("jpn")}/>
-     <MC l="🇺🇸 영어" s="30분×2회 (화상영어 포함)" c={tl.eng||0} m={2} co="#2563eb" oA={()=>ac("eng",2)} oS={()=>sc("eng")}/>
+     <MC l="🇯🇵 일본어" s="30분×3회 (90분)" c={tl.jpn||0} m={3} co="#dc2626" oA={()=>ac("jpn",3)} oS={()=>sc("jpn")}/>
+     <MC l="🇺🇸 영어" s="30분×3회 (화상영어 포함)" c={tl.eng||0} m={3} co="#2563eb" oA={()=>ac("eng",3)} oS={()=>sc("eng")}/>
      <Ck i="🔖" l="N.F." s="" dn={tl.nf} co="#a855f7" oT={()=>tg("nf")}/>
 
      <div style={{...S.inf,textAlign:"center",lineHeight:1.5}}>
@@ -436,7 +437,7 @@ function Tst({T,svT,fc,RT,sRT,td}){
  const h2=()=>{if(!rTm)return;sRT(p=>[...p,{type:rTy,time:rTm,date:td}]);sRTm("");sS2(true);setTimeout(()=>sS2(false),2000)};
  return(<div style={{display:"flex",flexDirection:"column",gap:12}}>
   <div style={{...S.cd,background:fc.pOk&&fc.uOk?"rgba(22,163,74,0.06)":"rgba(220,38,38,0.05)"}}>
-   <div style={{color:"#6b7c6b",fontSize:9,fontWeight:800,marginBottom:4}}>2027.4 예상</div>
+   <div style={{color:"#6b7c6b",fontSize:9,fontWeight:800,marginBottom:4}}>2027.5 예상</div>
    <div style={{display:"flex",gap:12}}>
     <span style={{fontSize:24,fontWeight:900,color:fc.pOk?"#16a34a":"#dc2626",fontFamily:"monospace"}}>P{fc.pj}/80</span>
     <span style={{fontSize:24,fontWeight:900,color:fc.uOk?"#16a34a":"#dc2626",fontFamily:"monospace"}}>U{fc.uj}/20</span>
