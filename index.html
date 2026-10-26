@@ -2,507 +2,494 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="단련">
-<meta name="theme-color" content="#f0f7f0">
-<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
-<title>단련 S2</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#08080f">
+<title>단련 S3</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{background:#f0f7f0;overflow:hidden;height:100%;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;color:#1a2e1a}
-button,input,select{font-family:inherit;outline:none}
-::-webkit-scrollbar{display:none}
+:root{--bg:#08080f;--card:#12121e;--card2:#1a1a2a;--acc:#4ade80;--acc2:#60a5fa;--acc3:#fbbf24;--txt:#e0e0ec;--dim:#55557a;--bdr:#222238;--r:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom,20px)}
+.hdr{background:linear-gradient(135deg,#0f0f2a,#161630);padding:24px 16px 18px;text-align:center}
+.hdr h1{font-size:14px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.dday{font-size:42px;font-weight:800;background:linear-gradient(135deg,var(--acc),#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:4px 0}
+.dday-sub{font-size:12px;color:var(--dim)}
+.pbar{height:4px;background:#1a1a30;border-radius:2px;margin:12px 32px 0;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--acc),#22d3ee);border-radius:2px;transition:width .3s}
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:10}
+.tab{flex:1;padding:11px;text-align:center;font-size:13px;color:var(--dim);border:none;background:none;cursor:pointer;font-family:inherit}
+.tab.on{color:var(--acc);border-bottom:2px solid var(--acc)}
+.cd{background:var(--card);border-radius:var(--r);margin:10px 14px;padding:14px}
+.ct{font-size:14px;font-weight:600;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ci{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #1a1a2a;gap:10px}
+.ci:last-child{border-bottom:none}
+.ck{width:30px;height:30px;border-radius:50%;border:2px solid #333350;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;color:transparent;transition:all .15s;font-family:inherit}
+.ck.on{background:var(--acc);border-color:var(--acc);color:#000}
+.cl{flex:1;font-size:14px}.cs{font-size:11px;color:var(--dim)}
+.ri{width:52px;background:#1a1a2a;border:1px solid var(--bdr);border-radius:8px;color:#fff;text-align:center;padding:6px 2px;font-size:15px;font-family:inherit}
+.ri:focus{border-color:var(--acc);outline:none}
+.sr{display:flex;gap:6px;align-items:flex-end;justify-content:center}
+.sb{display:block;width:calc(100% - 28px);margin:14px auto;padding:14px;background:var(--acc);color:#000;font-size:16px;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;font-family:inherit;transition:all .2s}
+.sb:active{transform:scale(.97);opacity:.9}
+.sb.ok{background:#166534;color:var(--acc)}
+.dn{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px}
+.dn button{background:var(--card2);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;font-family:inherit}
+.dn .dt{font-size:15px;font-weight:600}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sx{background:var(--card2);border-radius:10px;padding:12px;text-align:center}
+.sn{font-size:26px;font-weight:700}.sl{font-size:11px;color:var(--dim);margin-top:2px}
+.wd{display:flex;gap:5px;justify-content:center;margin:6px 0}
+.wdot{width:34px;height:34px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--dim)}
+.wdot.tr{background:#14532d;color:var(--acc)}.wdot.td{box-shadow:0 0 0 2px var(--acc)}
+.pb{height:6px;background:#1a1a2a;border-radius:3px;overflow:hidden;margin-top:6px}
+.pf{height:100%;border-radius:3px;transition:width .3s}
+.pg{background:var(--acc)}.pbl{background:var(--acc2)}.py{background:var(--acc3)}
+.jpb{display:flex;gap:8px}
+.jp{flex:1;background:var(--card2);border-radius:10px;padding:10px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.jp.dn2{background:#1e3a5f;border-color:var(--acc2)}
+.jpn{font-size:20px;font-weight:700}.jpl{font-size:10px;color:var(--dim);margin-top:2px}
+.hd{padding:10px 0;border-bottom:1px solid #1a1a2a}
+.hdt{font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.htg{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.ht{font-size:10px;padding:2px 7px;border-radius:8px;background:#1a1a2a;color:var(--dim)}
+.ht.ok{background:#14532d;color:var(--acc)}
+.fill-btn{font-size:11px;background:var(--card2);border:1px solid var(--bdr);color:var(--acc);padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit}
+.comp{text-align:center;padding:8px;margin:0 14px;background:var(--card);border-radius:var(--r);font-size:13px}
+.comp b{color:var(--acc)}
 </style>
 </head>
 <body>
-<div id="root" style="padding:20px">로딩 중...</div>
-<script>window.onerror=function(m,s,l,c,e){document.getElementById("root").innerHTML='<div style="padding:20px;color:red"><b>오류:</b> '+m+'</div>';return true}</script>
+<div id="root"></div>
 <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
-<script>if(!window.React)document.getElementById("root").innerHTML='<p style="color:red">React 로드 실패</p>'</script>
-<script type="text/babel" data-presets="react">
-const{useState,useEffect,useMemo,useCallback}=React;
+<script>
+window.onerror=function(m){document.getElementById("root").innerHTML='<div style="padding:20px;color:#f87171"><b>오류:</b> '+m+'</div>';return true};
+(function(){try{var m={name:"단련 S3",short_name:"단련",start_url:"./",display:"standalone",background_color:"#08080f",theme_color:"#08080f"};var b=new Blob([JSON.stringify(m)],{type:"application/json"});var l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(b);document.head.appendChild(l)}catch(e){}})();
+</script>
+<script type="text/babel">
+const {useState,useEffect,useMemo} = React;
 
-const VER="S2 v2.1";
-const START=new Date(2026,8,29); // 9/29 시작
-const BEND=new Date(2027,4,31); // 모든 목표 2027.5
-const RSTART=new Date(2026,8,29);
-const REND=new Date(2027,4,31);
-const ADAPT="2026-10-03"; // 적응기 종료일
-const TARGET={p:80,u:20},INIT={p:48,u:14};
-const G10K=55;
-const WK_TARGET=4; // 주 4회
+/* ── Constants ── */
+const START="2026-10-26",DDAY="2026-12-25",WT=4;
+const KD="s3-daily",KJ="s3-jpn";
+const DL=["월","화","수","목","금","토","일"];
 
-/* 상체 월별 (Plotkin22+MTI GtG+Nóbrega23, 5세트 50% 디로드) */
-const BP={
- 9:{mx:{p:48,u:14},st:{p:15,u:5},sets:3,ph:"적응기"},
- 10:{mx:{p:52,u:15},st:{p:26,u:7},sets:5,ph:"재적응"},
- 11:{mx:{p:56,u:16},st:{p:28,u:8},sets:5,ph:"기초"},
- 12:{mx:{p:60,u:16},st:{p:30,u:8},sets:5,ph:"축적"},
- 1:{mx:{p:64,u:17},st:{p:32,u:9},sets:5,ph:"축적"},
- 2:{mx:{p:68,u:18},st:{p:34,u:9},sets:5,ph:"강화"},
- 3:{mx:{p:72,u:19},st:{p:36,u:10},sets:5,ph:"강화"},
- 4:{mx:{p:76,u:19},st:{p:38,u:10},sets:5,ph:"피크"},
- 5:{mx:{p:80,u:20},st:{p:40,u:10},sets:5,ph:"최종"},
-};
-
-const BT=[
- {d:"2026-10-03",t:{p:52,u:15}},{d:"2026-10-31",t:{p:56,u:16}},
- {d:"2026-11-28",t:{p:60,u:16}},{d:"2026-12-27",t:{p:64,u:17}},
- {d:"2027-01-31",t:{p:68,u:18}},{d:"2027-02-27",t:{p:72,u:19}},
- {d:"2027-03-29",t:{p:76,u:19}},{d:"2027-04-26",t:{p:80,u:20}},
-];
-
-/* 인터벌 (Billat01+Seiler04+Esfarjani07) */
-const IV={
- 9:{s:"슬로우 조깅만",p:"6:30+",n:"부상 회복",ph:"적응"},
- 10:{s:"200m×6",p:"4:40~5:00",n:"재적응",ph:"P1"},
- 11:{s:"400m×5",p:"4:50~5:10",n:"기초",ph:"P1"},
- 12:{s:"400m×6",p:"4:45~5:05",n:"볼륨",ph:"P2"},
- 1:{s:"4분×4",p:"5:00~5:10",n:"Seiler",ph:"P2"},
- 2:{s:"800m×5",p:"4:50~5:10",n:"VO2max",ph:"P3"},
- 3:{s:"1000m×4",p:"5:10~5:20",n:"레이스",ph:"P3"},
- 4:{s:"1000m×5",p:"5:15~5:25",n:"볼륨피크",ph:"P4"},
- 5:{s:"800m×3",p:"5:15~5:20",n:"테이퍼",ph:"P6"},
-};
-
-const RTD=[
- {d:"2026-11-28",l:"11월 첫5K"},{d:"2026-12-27",l:"12월 5K"},
- {d:"2027-01-31",l:"1월 5K+첫10K"},{d:"2027-02-27",l:"2월 10K"},
- {d:"2027-03-29",l:"3월 10K"},{d:"2027-04-26",l:"4월 리허설"},
- {d:"2027-05-24",l:"5월 최종🏁"},
-];
-
-const HOL=new Set(["2026-10-03","2026-10-09","2026-12-25","2027-01-01","2027-02-16","2027-02-17","2027-02-18","2027-03-01","2027-05-05"]);
-
-const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-const td0=()=>ymd(new Date());
-const db=(a,b)=>Math.round((b-a)/86400000);
-const ad=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
-const DN=["일","월","화","수","목","금","토"];
-const wm=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return new Date(x.getFullYear(),x.getMonth(),x.getDate())};
-const isWE=d=>{const w=new Date(d).getDay();return w===0||w===6};
-const isDL=d=>new Date(d).getDate()>=22; // 디로드 주
-
-const K1="s2-logs",K2="s2-tests",K3="s2-runs",K4="s2-rtests";
-const ld=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
+/* ── Utils ── */
+const fmt=d=>{const x=d instanceof Date?d:new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")};
+const now=()=>fmt(new Date());
+const dif=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const wkn=d=>Math.max(0,Math.floor(dif(START,d)/7));
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 
-const eL=()=>({p:0,u:0,core:0,yoga:0,med:0,nf:false,read:0,write:false,eng:0,jpn:0,ts:0});
-const gL=(L,d)=>{const l=L[d];if(!l)return eL();return{...eL(),...l}};
-const delayW=(ds,ts)=>{if(!ts)return 1;const dl=Math.floor((ts-new Date(ds).getTime())/86400000);return dl<=1?1:dl===2?0.7:0.5};
+/* ── Targets ── */
+const puT=d=>Math.max(12,12+wkn(d));
+const plT=d=>d>="2026-12-07"?7:d>="2026-11-16"?6:5;
 
-function aPlan(mo,T){
- const b=BP[mo]||BP[10];
- const s=Object.entries(T).filter(([d])=>{const m=new Date(d).getMonth()+1;return m<mo||(m===mo&&new Date(d).getDate()<=15)}).sort(([a],[b])=>a.localeCompare(b));
- if(!s.length)return{...b,adj:false,rsn:null};
- const[td,r]=s[s.length-1];const aP=r.p||INIT.p,aU=r.u||INIT.u;
- const ti=BT.find(t=>t.d===td);
- const tP=ti?ti.t.p:b.mx.p,tU=ti?ti.t.u:b.mx.u;
- if(aP>=tP&&aU>=tU)return{...b,adj:true,behind:false,rsn:td.slice(5)+" 통과"};
- return{...b,st:{p:Math.max(Math.round(aP*0.55),10),u:Math.max(Math.round(aU*0.55),5)},
-  sets:Math.min(b.sets+1,8),adj:true,behind:true,rsn:td.slice(5)+" 미달→조정"};
-}
+/* ── Week (Mon-Sun) ── */
+const getWk=d=>{const dt=new Date(d),dy=dt.getDay()||7,mn=new Date(dt);mn.setDate(dt.getDate()-dy+1);return Array.from({length:7},(_,i)=>{const x=new Date(mn);x.setDate(mn.getDate()+i);return fmt(x)})};
 
-function wkRun(R,d){const m=wm(d);let e=0,i=0;for(let j=0;j<7;j++){const r=R[ymd(ad(m,j))];if(r){if(r.type==="인터벌"||r.type==="불스")i++;else e++}}return{e,i,t:e+i}}
+/* ── Data ── */
+const E=()=>({ev:false,em:0,jp:false,md:[false,false],nf:false,yg:[false,false,false,false],pu:[0,0,0,0,0],pl:[0,0,0,0,0],rn:false,ts:0});
+const isTr=d=>d&&(d.ev||d.em>0||d.jp||(d.md&&d.md.some(Boolean))||d.nf||(d.yg&&d.yg.some(Boolean))||(d.pu&&d.pu.some(v=>v>0))||(d.pl&&d.pl.some(v=>v>0))||d.rn);
 
-function brDay(ds,l,run){
- let e=0,mx=0;
- mx+=1;if(l&&l.nf)e+=1;
- mx+=2;if(l)e+=Math.min(l.med||0,4)*0.5;
- mx+=2;if(l)e+=Math.min(l.yoga||0,4)*0.5;
- mx+=3;if(l)e+=Math.min(l.read||0,3);
- mx+=1;if(l&&l.write)e+=1;
- mx+=3;if(l)e+=Math.min(l.eng||0,3);
- mx+=3;if(l)e+=Math.min(l.jpn||0,3);
- if(new Date(ds)>=RSTART){mx+=2;if(run)e+=2}
- return{e,mx};
-}
-
-function App(){
- const[L,sL]=useState(()=>ld(K1)||{});
- const[T,sT]=useState(()=>ld(K2)||{});
- const[R,sR]=useState(()=>ld(K3)||{});
- const[RT,sRT]=useState(()=>ld(K4)||[]);
- const[vw,sVw]=useState("rec");
- const[aD,sAD]=useState(td0());
- const[cM,sCM]=useState(()=>new Date(new Date().getFullYear(),new Date().getMonth(),1));
-
- useEffect(()=>sv(K1,L),[L]);useEffect(()=>sv(K2,T),[T]);
- useEffect(()=>sv(K3,R),[R]);useEffect(()=>sv(K4,RT),[RT]);
-
- const td=td0(),now=new Date(),tmr=ymd(ad(now,1));
- const isT=aD===td,mo=new Date(aD).getMonth()+1;
- const plan=useMemo(()=>aPlan(mo,T),[mo,T]);
- const tl=gL(L,aD);
- const dLB=db(now,BEND),dLR=db(now,REND);
- const adapt=aD<ADAPT;
-
- const go=useCallback(o=>{const d=ymd(ad(new Date(aD),o));if(d<ymd(START)||d>tmr)return;sAD(d)},[aD,tmr]);
- const goT=useCallback(()=>sAD(td),[td]);
- const uL=useCallback((d,p)=>sL(pr=>{const n={...pr};const old=gL(n,d);const mg={...old,...p};if(!old.ts||old.ts===0)mg.ts=Date.now();n[d]=mg;return n}),[]);
- const af=useCallback(k=>{uL(aD,{[k]:(tl[k]||0)+1})},[aD,tl]);
- const sf=useCallback(k=>{if((tl[k]||0)>0)uL(aD,{[k]:tl[k]-1})},[aD,tl]);
- const tg=useCallback(k=>{uL(aD,{[k]:!tl[k]})},[aD,tl]);
- const ac=useCallback((k,m)=>{uL(aD,{[k]:Math.min((tl[k]||0)+1,m)})},[aD,tl]);
- const sc=useCallback(k=>{if((tl[k]||0)>0)uL(aD,{[k]:tl[k]-1})},[aD,tl]);
- const svBT=(d,p,u)=>sT(pr=>{const n={...pr};if(p===null)delete n[d];else n[d]={p:+p||0,u:+u||0};sv(K2,n);return n});
- const wk=wkRun(R,now);
-
- const fc=useMemo(()=>{
-  const s=Object.entries(T).filter(([d])=>d<=td).sort(([a],[b])=>a.localeCompare(b));
-  const lat=s.length?s[s.length-1][1]:{p:INIT.p,u:INIT.u};
-  let tP=0,tU=0,aP=0,aU=0;const c=new Date(START);
-  while(c<=now&&c<=BEND){const m=c.getMonth()+1;const bp=BP[m];
-   if(bp&&!isWE(c)){tP+=bp.sets*bp.st.p;tU+=bp.sets*bp.st.u}
-   const l=L[ymd(c)];if(l&&bp){aP+=(l.p||0)*bp.st.p;aU+=(l.u||0)*bp.st.u}
-   c.setDate(c.getDate()+1)}
-  const pR=tP>0?aP/tP:1,uR=tU>0?aU/tU:1;
-  const el=db(START,now)||1,tot=db(START,BEND),rm=Math.max(tot-el,1);
-  return{pj:Math.round(lat.p+(TARGET.p-lat.p)*Math.min(pR,1.2)*(rm/(rm+el*0.3))),
-   uj:Math.round(lat.u+(TARGET.u-lat.u)*Math.min(uR,1.2)*(rm/(rm+el*0.3))),
-   get pOk(){return this.pj>=80},get uOk(){return this.uj>=20}};
- },[L,T,td]);
- const fcOk=fc.pOk&&fc.uOk;
-
- const goals=useMemo(()=>{
-  let tD=0,bD=0,brMx=0,brE=0;const c=new Date(START);
-  const endD=new Date(Math.max(BEND.getTime(),REND.getTime()));
-  while(c<=now&&c<=endD){const ds=ymd(c);
-   if(!isWE(c)){tD++;
-    const l=L[ds];const mp=BP[c.getMonth()+1];const run=R[ds];
-    const w=delayW(ds,l?l.ts:0);
-    const br=brDay(ds,l,run);brMx+=br.mx;brE+=br.e*w;
-    if(l&&mp&&(l.p||0)>=Math.ceil(mp.sets*0.5)&&(l.u||0)>=Math.ceil(mp.sets*0.5)&&(l.core||0)>=1)bD+=w;
-   }c.setDate(c.getDate()+1)}
-  // 주4회 기준: 80%가 100%
-  const bR=tD>0?Math.min(bD/(tD*0.8),1):1;
-  const brR=brMx>0?Math.min(brE/(brMx*0.8),1):1;
-
-  const allR=Object.keys(R).filter(d=>new Date(d)>=RSTART).sort();
-  let gW=0,tW=0;
-  if(allR.length>0){let wp=new Date(wm(new Date(allR[0])));const cw=wm(now);
-   while(wp<cw){tW++;let wr=0,wi=0;
-    for(let i=0;i<7;i++){const r=R[ymd(ad(wp,i))];if(r){wr++;if(r.type==="인터벌"||r.type==="불스")wi++}}
-    if(wr>=3&&wi>=1)gW++;wp=ad(wp,7)}}
-  const rR=tW>0?gW/tW:1;
-
-  return{
-   body:{rate:bR,ok:fcOk&&bR>=0.7,label:"P80 U20",sub:"2027.5",color:fcOk&&bR>=0.7?"#16a34a":"#dc2626"},
-   brain:{rate:brR,ok:brR>=0.7,label:"전교1등 두뇌",sub:"2027.5",color:brR>=0.7?"#16a34a":"#dc2626"},
-   run:{rate:rR,ok:rR>=0.7,label:"10K 55분",sub:"2027.5",color:rR>=0.7?"#16a34a":"#dc2626",gW,tW},
-   brE:Math.round(brE),brMx:Math.round(brMx)};
- },[L,fcOk,R,RT]);
-
- const nxRT=RTD.find(t=>t.d>=td);
-
- return(
-  <div style={S.app}>
-   <div style={{padding:"8px 14px 4px",background:"linear-gradient(135deg,#e8f5e8,#f0f7f0)",flexShrink:0}}>
-    <div style={{display:"flex",justifyContent:"space-between"}}>
-     <span style={{color:"#6b7c6b",fontSize:9,fontWeight:800}}>단련 {VER} · 주4회</span>
-     <span style={{color:"#2d5a27",fontSize:10,fontWeight:700}}>JLPT N3 D-{db(now,new Date(2027,6,4))}</span>
-    </div>
-   </div>
-   <div style={{flexShrink:0}}>
-    <div style={{display:"flex",gap:3,padding:"5px 8px",borderBottom:"1px solid rgba(0,0,0,0.03)"}}>
-     {[goals.body,goals.brain,goals.run].map((g,i)=>(
-      <div key={i} style={{flex:1,borderRadius:8,padding:"5px 3px",border:"1.5px solid "+g.color+"30",background:g.ok?"rgba(22,163,74,0.08)":"rgba(220,38,38,0.06)",textAlign:"center"}}>
-       <div style={{fontSize:7,color:g.color,fontWeight:900}}>{g.sub}</div>
-       <div style={{fontSize:9,fontWeight:900,lineHeight:1.3}}>{g.label}</div>
-       <div style={{fontSize:13,fontWeight:900,color:g.color,fontFamily:"monospace"}}>{Math.round(g.rate*100)}%</div>
-      </div>))}
-    </div>
-    <div style={S.nav}>
-     {[{id:"rec",l:"기록",i:"⊕"},{id:"run",l:"러닝",i:"🏃"},{id:"cal",l:"캘린더",i:"▦"},{id:"tst",l:"테스트",i:"▲"}].map(t=>(
-      <button key={t.id} onClick={()=>sVw(t.id)} style={{...S.nb,...(vw===t.id?S.na:{})}}>
-       <span style={{fontSize:14}}>{t.i}</span><span style={{fontSize:9}}>{t.l}</span>
-      </button>))}
-    </div>
-   </div>
-   <div style={S.ct}>
-    {vw==="rec"&&<Rec plan={plan} tl={tl} aD={aD} isT={isT} td={td} tmr={tmr} goals={goals} fc={fc} adapt={adapt} af={af} sf={sf} tg={tg} ac={ac} sc={sc} go={go} goT={goT}/>}
-    {vw==="run"&&<RunV R={R} sR={sR} td={td} now={now} wk={wk} aD={aD} go={go} goT={goT} isT={isT} tmr={tmr} goals={goals} nxRT={nxRT}/>}
-    {vw==="cal"&&<Cal L={L} R={R} cM={cM} sCM={sCM} td={td} onSel={d=>{sAD(d);sVw("rec")}}/>}
-    {vw==="tst"&&<Tst T={T} svT={svBT} fc={fc} RT={RT} sRT={sRT} td={td}/>}
-   </div>
-  </div>);
-}
-
-function Rec({plan,tl,aD,isT,td,tmr,goals,fc,adapt,af,sf,tg,ac,sc,go,goT}){
- const d=new Date(aD),dw=DN[d.getDay()],we=isWE(aD);
- const dl=isDL(aD)&&!adapt;
- const sets=adapt?3:dl?3:plan.sets;
- const stP=adapt?15:dl?Math.round(plan.st.p*0.8):plan.st.p;
- const stU=adapt?5:dl?Math.round(plan.st.u*0.8):plan.st.u;
- const tag=adapt?"🩹 적응기 (~10/3)":dl?"🔄 디로드 주":"";
-
- return(
-  <div style={{display:"flex",flexDirection:"column",gap:10}}>
-   <DNav d={d} dw={dw} isT={isT} aD={aD} tmr={tmr} go={go} goT={goT}/>
-   {we?(
-    <div style={{...S.cd,textAlign:"center",padding:24}}>
-     <div style={{fontSize:28,marginBottom:8}}>😴</div>
-     <div style={{color:"#6b7c6b",fontSize:14,fontWeight:700}}>주말 · 완전 휴식</div>
-    </div>
-   ):(
-    <div style={{display:"flex",flexDirection:"column",gap:10}}>
-     {tag&&<div style={{...S.cd,padding:9,borderLeft:"4px solid #2563eb",background:"rgba(37,99,235,0.04)"}}>
-      <div style={{color:"#2563eb",fontSize:11,fontWeight:800}}>{tag}</div></div>}
-     {plan.adj&&plan.rsn&&<div style={{...S.cd,padding:9,borderLeft:"4px solid "+(plan.behind?"#d97706":"#16a34a")}}>
-      <div style={{color:plan.behind?"#b45309":"#16a34a",fontSize:10,fontWeight:800}}>{plan.rsn}</div></div>}
-
-     <SH t="☀ 아침 루틴" c="#0891b2"/>
-     <MC l="🧘 명상" s="3분×4회" c={tl.med||0} m={4} co="#0891b2" oA={()=>ac("med",4)} oS={()=>sc("med")}/>
-     <MC l="🧘‍♀️ 스트레칭" s="5분×4회" c={tl.yoga||0} m={4} co="#16a34a" oA={()=>ac("yoga",4)} oS={()=>sc("yoga")}/>
-     <Ck i="✏️" l="쓰기" s="20분" dn={tl.write} co="#6366f1" oT={()=>tg("write")}/>
-
-     <SH t={"💪 GtG"+(adapt?" · 데드행+가벼운 세트":"")} c="#2563eb"/>
-     <Ct l="푸시업" s={stP+"회×"+sets+"세트"} c={tl.p} t={sets} v={tl.p*stP} co="#2563eb" oA={()=>af("p")} oS={()=>sf("p")}/>
-     <Ct l="풀업" s={stU+"회×"+sets+"세트"} c={tl.u} t={sets} v={tl.u*stU} co="#7c3aed" oA={()=>af("u")} oS={()=>sf("u")}/>
-     <MC l="💪 복근" s="1분×2회" c={tl.core||0} m={2} co="#d97706" oA={()=>ac("core",2)} oS={()=>sc("core")}/>
-
-     <SH t="📚 두뇌" c="#0d9488"/>
-     <MC l="📖 읽기" s="20분×3회" c={tl.read||0} m={3} co="#0d9488" oA={()=>ac("read",3)} oS={()=>sc("read")}/>
-     <MC l="🇯🇵 일본어" s="30분×3회 (90분)" c={tl.jpn||0} m={3} co="#dc2626" oA={()=>ac("jpn",3)} oS={()=>sc("jpn")}/>
-     <MC l="🇺🇸 영어" s="30분×3회 (화상영어 포함)" c={tl.eng||0} m={3} co="#2563eb" oA={()=>ac("eng",3)} oS={()=>sc("eng")}/>
-     <Ck i="🔖" l="N.F." s="" dn={tl.nf} co="#a855f7" oT={()=>tg("nf")}/>
-
-     <div style={{...S.inf,textAlign:"center",lineHeight:1.5}}>
-      주4회 · JLPT N3 2027.7 · 영어회화 2027.1<br/>
-      <span style={{fontSize:8,color:"#8a9b8a"}}>주 60분+ 화상영어 포함</span>
-     </div>
-    </div>
-   )}
-   <div style={{height:160}}/>
-  </div>);
-}
-
-function RunV({R,sR,td,now,wk,aD,go,goT,isT,tmr,goals,nxRT}){
- const d=new Date(aD),dw=DN[d.getDay()],mo=d.getMonth()+1;
- const cr=R[aD],iv=IV[mo];
- const[mn,sMn]=useState("");const[sv2,sSv]=useState(false);
- const logR=type=>{sR(p=>({...p,[aD]:{minutes:mn||"30",type,ts:Date.now()}}));sSv(true);sMn("");setTimeout(()=>sSv(false),1500)};
- const delR=()=>sR(p=>{const n={...p};delete n[aD];return n});
- return(
-  <div style={{display:"flex",flexDirection:"column",gap:10}}>
-   <DNav d={d} dw={dw} isT={isT} aD={aD} tmr={tmr} go={go} goT={goT}/>
-   <div style={{...S.cd,padding:12}}>
-    <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-     <span style={{fontSize:13,fontWeight:800}}>이번 주</span>
-     <span style={{color:goals.run.ok?"#16a34a":"#dc2626",fontSize:10,fontWeight:800}}>
-      {goals.run.tW===0?"✓ 100%":goals.run.gW+"/"+goals.run.tW+"주"}
-     </span>
-    </div>
-    <div style={{display:"flex",gap:6,justifyContent:"center"}}>
-     {[0,1,2].map(i=><div key={i} style={{width:18,height:18,borderRadius:5,background:i<wk.e?"#0891b2":"rgba(0,0,0,0.06)"}}/>)}
-     <div style={{width:18,height:18,borderRadius:5,background:wk.i>=1?"#d97706":"rgba(0,0,0,0.06)"}}/>
-     <span style={{fontSize:10,fontWeight:700,color:"#6b7c6b",marginLeft:4}}>{wk.t}/4{wk.t>=4?" 🎉":""}</span>
-    </div>
-   </div>
-
-   {cr?(
-    <div style={{...S.cd,borderLeft:"4px solid #16a34a"}}>
-     <div style={{display:"flex",justifyContent:"space-between"}}>
-      <span style={{color:"#16a34a",fontSize:14,fontWeight:800}}>✓ {cr.type} {cr.minutes}분</span>
-      <button onClick={delR} style={{background:"none",border:"none",color:"#8a9b8a",fontSize:10}}>삭제</button>
-     </div>
-    </div>
-   ):sv2?(
-    <div style={{textAlign:"center",padding:16,color:"#16a34a",fontSize:16,fontWeight:900}}>✓</div>
-   ):(
-    <div style={S.cd}>
-     <div style={{fontSize:10,color:"#6b7c6b",marginBottom:4}}>시간(분)</div>
-     <input type="number" value={mn} onChange={e=>sMn(e.target.value)} style={{...S.inp,marginBottom:10}} placeholder="30"/>
-     <div style={{display:"flex",gap:6}}>
-      <button onClick={()=>logR("러닝")} style={{...S.bt,flex:1,background:"#0891b2",color:"#fff",border:"none",fontWeight:800,fontSize:12}}>🏃 러닝</button>
-      <button onClick={()=>logR("인터벌")} style={{...S.bt,flex:1,background:"#d97706",color:"#fff",border:"none",fontWeight:800,fontSize:12}}>⚡ 인터벌</button>
-      <button onClick={()=>logR("불스")} style={{...S.bt,flex:1,background:"#7c3aed",color:"#fff",border:"none",fontWeight:800,fontSize:12}}>🐂 불스</button>
-     </div>
-    </div>
-   )}
-
-   {iv&&<div style={{...S.cd,borderTop:"3px solid #d97706"}}>
-    <div style={{color:"#d97706",fontSize:12,fontWeight:800,marginBottom:4}}>⚡ {mo}월 ({iv.ph})</div>
-    <div style={{fontSize:14,fontWeight:900,color:"#b45309"}}>{iv.s}</div>
-    <div style={{color:"#6b7c6b",fontSize:10}}>{iv.p}/km · {iv.n}</div>
-    <div style={{color:"#8a9b8a",fontSize:9,marginTop:4}}>인터벌 대신 불스 20분 가능</div>
-   </div>}
-
-   {nxRT&&<div style={{...S.cd,borderLeft:"4px solid #d97706",background:"rgba(217,119,6,0.04)"}}>
-    <div style={{display:"flex",justifyContent:"space-between"}}>
-     <div><div style={{color:"#d97706",fontSize:12,fontWeight:800}}>🏁 {nxRT.l}</div><div style={{color:"#6b7c6b",fontSize:10}}>{nxRT.d}</div></div>
-     <div style={{color:"#b45309",fontSize:12,fontWeight:900}}>D-{db(now,new Date(nxRT.d))}</div>
-    </div>
-   </div>}
-   <div style={{...S.inf,textAlign:"center"}}>주3회(30분+)+1회인터벌/불스 · 10K 55분 2027.5</div>
-   <div style={{height:160}}/>
-  </div>);
-}
-
-function DNav({d,dw,isT,aD,tmr,go,goT}){
- return(<div style={{display:"flex",alignItems:"center",gap:6}}>
-  <button onClick={()=>go(-1)} style={S.dn}>‹</button>
-  <div style={{flex:1,textAlign:"center"}}>
-   <div style={{fontSize:15,fontWeight:900,color:isT?"#2d5a27":"#b45309"}}>{d.getMonth()+1}월 {d.getDate()}일 ({dw})</div>
-   {!isT&&aD!==tmr&&<div style={{marginTop:4}}>
-    <span style={{color:"#dc2626",fontSize:9,fontWeight:800}}>⚠ 소급→감점 </span>
-    <button onClick={goT} style={{color:"#2d5a27",fontSize:9,fontWeight:800,background:"rgba(22,163,74,0.1)",border:"1px solid rgba(22,163,74,0.3)",borderRadius:4,padding:"2px 6px"}}>오늘로</button></div>}
-   {isT&&<div style={{color:"#6b7c6b",fontSize:9,marginTop:2}}>오늘</div>}
-   {aD===tmr&&<div style={{color:"#2563eb",fontSize:9,fontWeight:700,marginTop:2}}>내일</div>}
-  </div>
-  <button onClick={()=>go(1)} style={{...S.dn,opacity:aD>=tmr?0.2:1}}>›</button>
- </div>);
-}
-function SH({t,c}){return(<div style={{color:c,fontSize:10,fontWeight:800,padding:"8px 0 2px",borderBottom:"2px solid "+c+"20",marginTop:4}}>{t}</div>)}
-function Ct({l,s,c,t,v,co,oA,oS}){
- return(<div style={{...S.cd,borderLeft:"4px solid "+co}}>
-  <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
-   <div><div style={{color:co,fontSize:13,fontWeight:800}}>{l}</div><div style={{color:"#6b7c6b",fontSize:9}}>{s}</div></div>
-   <div style={{textAlign:"right"}}><div style={{fontSize:26,fontWeight:900,fontFamily:"monospace"}}>{c}<span style={{fontSize:13,color:"#8a9b8a"}}>/{t}</span></div><div style={{color:"#6b7c6b",fontSize:9}}>{v}회</div></div>
-  </div>
-  <div style={{height:5,background:"rgba(0,0,0,0.06)",borderRadius:3,overflow:"hidden",marginBottom:10}}><div style={{height:"100%",width:Math.min(100,(c/t)*100)+"%",background:co,borderRadius:3}}/></div>
-  <div style={{display:"flex",gap:6}}>
-   <button onClick={oS} style={{...S.bt,width:46,fontSize:18,color:"#6b7c6b"}}>−</button>
-   <button onClick={oA} style={{...S.bt,flex:1,background:co,color:"#fff",border:"none",fontWeight:800}}>+ 세트</button>
-  </div>
- </div>);
-}
-function MC({l,s,c,m,co,oA,oS}){
- return(<div style={{...S.cd,borderLeft:"4px solid "+(c>=m?co:"rgba(0,0,0,0.08)")}}>
-  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-   <div><div style={{color:co,fontSize:12,fontWeight:800}}>{l}</div><div style={{color:"#6b7c6b",fontSize:9}}>{s}</div></div>
-   <div style={{fontSize:22,fontWeight:900,fontFamily:"monospace"}}>{c}<span style={{fontSize:11,color:"#8a9b8a"}}>/{m}</span></div>
-  </div>
-  <div style={{height:4,background:"rgba(0,0,0,0.06)",borderRadius:2,overflow:"hidden",marginBottom:8}}><div style={{height:"100%",width:Math.min(100,(c/m)*100)+"%",background:co,borderRadius:2}}/></div>
-  <div style={{display:"flex",gap:6}}>
-   <button onClick={oS} style={{...S.bt,width:40,height:36,fontSize:16,color:"#6b7c6b"}}>−</button>
-   <button onClick={oA} style={{...S.bt,flex:1,height:36,background:co,color:"#fff",border:"none",fontWeight:800,opacity:c>=m?0.4:1}}>+</button>
-  </div>
- </div>);
-}
-function Ck({i,l,s,dn,co,oT}){
- return(<div onClick={oT} style={{...S.cd,padding:11,display:"flex",alignItems:"center",gap:10,borderLeft:"4px solid "+(dn?co:"rgba(0,0,0,0.08)")}}>
-  <div style={{width:28,height:28,borderRadius:7,border:"2px solid "+(dn?co:"rgba(0,0,0,0.15)"),background:dn?co:"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
-   {dn&&<span style={{color:"#fff",fontSize:13,fontWeight:900}}>✓</span>}</div>
-  <div style={{flex:1}}><div style={{fontSize:12,fontWeight:800,color:dn?co:"#1a2e1a"}}>{i} {l}</div>{s&&<div style={{color:"#6b7c6b",fontSize:9}}>{s}</div>}</div>
-  {dn&&<span style={{color:co,fontSize:9,fontWeight:800}}>완료</span>}
- </div>);
-}
-
-function Cal({L,R,cM,sCM,td,onSel}){
- const yr=cM.getFullYear(),mo=cM.getMonth();
- const fw=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();
- const cs=[];for(let i=0;i<fw;i++)cs.push({d:new Date(yr,mo,-(fw-1-i)),out:true});
- for(let i=1;i<=dim;i++)cs.push({d:new Date(yr,mo,i),out:false});
- while(cs.length%7)cs.push({d:new Date(yr,mo+1,cs.length-fw-dim+1),out:true});
- return(<div style={{display:"flex",flexDirection:"column",gap:8}}>
-  <div style={{display:"flex",alignItems:"center",gap:6}}>
-   <button onClick={()=>sCM(new Date(yr,mo-1,1))} style={S.cn}>‹</button>
-   <div style={{flex:1,textAlign:"center",fontSize:15,fontWeight:800}}>{yr}년 {mo+1}월</div>
-   <button onClick={()=>sCM(new Date(yr,mo+1,1))} style={S.cn}>›</button>
-  </div>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
-   {DN.map((d,i)=><div key={d} style={{textAlign:"center",fontSize:9,fontWeight:800,padding:"4px 0",color:i===0?"#dc2626":"#6b7c6b"}}>{d}</div>)}
-  </div>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
-   {cs.map((c,i)=>{const ds=ymd(c.d),iT=ds===td,log=L[ds],run=R[ds],we=isWE(c.d);
-    let hB=false,hBr=false;
-    if(log){hB=(log.p||0)>0||(log.u||0)>0;hBr=!!(log.med||log.nf||log.yoga||log.read||log.write||log.eng||log.jpn)}
-    return(<div key={i} onClick={()=>ds<=ymd(ad(new Date(td),1))&&onSel(ds)}
-     style={{minHeight:44,padding:2,borderRadius:5,background:iT?"rgba(22,163,74,0.12)":"#fff",
-      border:iT?"1.5px solid rgba(22,163,74,0.5)":"1px solid rgba(0,0,0,0.05)",opacity:c.out?0.2:1}}>
-     <div style={{fontSize:9,fontWeight:iT?900:600,color:iT?"#16a34a":c.d.getDay()===0?"#dc2626":"#1a2e1a",fontFamily:"monospace"}}>{c.d.getDate()}</div>
-     <div style={{display:"flex",gap:2,marginTop:1}}>
-      {hB&&<div style={{width:5,height:5,borderRadius:3,background:"#2563eb"}}/>}
-      {hBr&&<div style={{width:5,height:5,borderRadius:3,background:"#16a34a"}}/>}
-      {run&&<div style={{width:5,height:5,borderRadius:3,background:run.type==="인터벌"||run.type==="불스"?"#d97706":"#0891b2"}}/>}
-      {!hB&&!hBr&&!run&&we&&<div style={{fontSize:6,color:"#8a9b8a"}}>휴</div>}
-     </div>
-    </div>)})}
-  </div>
-  <div style={{fontSize:8,color:"#6b7c6b",textAlign:"center"}}>🔵상체 🟢두뇌 🔵런 🟠인터벌/불스</div>
-  <div style={{height:160}}/>
- </div>);
-}
-
-function Tst({T,svT,fc,RT,sRT,td}){
- const[ip,sIp]=useState("");const[iu,sIu]=useState("");
- const[tD2,sTD]=useState(td);const[s1,sS1]=useState(false);
- const[rTy,sRTy]=useState("5K");const[rTm,sRTm]=useState("");const[s2,sS2]=useState(false);
- const h1=()=>{if(!ip&&!iu)return;svT(tD2,ip,iu);sIp("");sIu("");sS1(true);setTimeout(()=>sS1(false),2000)};
- const h2=()=>{if(!rTm)return;sRT(p=>[...p,{type:rTy,time:rTm,date:td}]);sRTm("");sS2(true);setTimeout(()=>sS2(false),2000)};
- return(<div style={{display:"flex",flexDirection:"column",gap:12}}>
-  <div style={{...S.cd,background:fc.pOk&&fc.uOk?"rgba(22,163,74,0.06)":"rgba(220,38,38,0.05)"}}>
-   <div style={{color:"#6b7c6b",fontSize:9,fontWeight:800,marginBottom:4}}>2027.5 예상</div>
-   <div style={{display:"flex",gap:12}}>
-    <span style={{fontSize:24,fontWeight:900,color:fc.pOk?"#16a34a":"#dc2626",fontFamily:"monospace"}}>P{fc.pj}/80</span>
-    <span style={{fontSize:24,fontWeight:900,color:fc.uOk?"#16a34a":"#dc2626",fontFamily:"monospace"}}>U{fc.uj}/20</span>
-   </div>
-  </div>
-  <div style={S.cd}>
-   <div style={{color:"#d97706",fontSize:12,fontWeight:800,marginBottom:8}}>💪 상체 맥스</div>
-   <select value={tD2} onChange={e=>sTD(e.target.value)} style={{...S.inp,marginBottom:8,appearance:"auto"}}>
-    <option value={td}>오늘</option>
-    {BT.map(t=><option key={t.d} value={t.d}>{t.d}</option>)}
-   </select>
-   <div style={{display:"flex",gap:8,marginBottom:8}}>
-    <input type="number" placeholder="푸시업" value={ip} onChange={e=>sIp(e.target.value)} style={S.inp}/>
-    <input type="number" placeholder="풀업" value={iu} onChange={e=>sIu(e.target.value)} style={S.inp}/>
-   </div>
-   {s1?<div style={{textAlign:"center",padding:10,color:"#16a34a",fontWeight:800}}>✓</div>
-   :<button onClick={h1} style={{...S.bt,width:"100%",background:"#d97706",color:"#fff",border:"none",fontWeight:800}}>저장</button>}
-  </div>
-  <div style={S.cd}>
-   <div style={{color:"#0891b2",fontSize:12,fontWeight:800,marginBottom:8}}>🏃 러닝 테스트</div>
-   <div style={{display:"flex",gap:6,marginBottom:8}}>
-    {["5K","10K"].map(t=><button key={t} onClick={()=>sRTy(t)} style={{flex:1,padding:"10px 0",borderRadius:8,fontSize:13,fontWeight:800,border:"2px solid "+(rTy===t?"#0891b2":"rgba(0,0,0,0.08)"),background:rTy===t?"rgba(8,145,178,0.08)":"#fff",color:rTy===t?"#0891b2":"#6b7c6b"}}>{t}</button>)}
-   </div>
-   <input type="number" step="0.1" value={rTm} onChange={e=>sRTm(e.target.value)} style={{...S.inp,marginBottom:8}} placeholder="완주 시간(분)"/>
-   {s2?<div style={{textAlign:"center",padding:10,color:"#16a34a",fontWeight:800}}>✓</div>
-   :<button onClick={h2} disabled={!rTm} style={{...S.bt,width:"100%",background:rTm?"#0891b2":"rgba(0,0,0,0.06)",color:rTm?"#fff":"#8a9b8a",border:"none",fontWeight:800}}>🏁 저장</button>}
-  </div>
-  <div style={S.cd}>
-   <div style={{fontSize:10,fontWeight:800,color:"#6b7c6b",marginBottom:6}}>상체 스케줄</div>
-   {BT.map(t=>{const r=T[t.d];return(
-    <div key={t.d} style={{display:"flex",alignItems:"center",gap:6,padding:"4px 8px",borderRadius:5,border:"1px solid rgba(0,0,0,0.04)",marginBottom:2}}>
-     <span style={{width:40,fontSize:9,color:"#6b7c6b",fontFamily:"monospace"}}>{t.d.slice(5)}</span>
-     <span style={{flex:1,fontSize:9,color:"#6b7c6b"}}>P{t.t.p}·U{t.t.u}</span>
-     {r?<span style={{display:"flex",gap:4}}>
-      <span style={{fontSize:9,fontWeight:800,color:r.p>=t.t.p?"#16a34a":"#dc2626"}}>P{r.p}</span>
-      <span style={{fontSize:9,fontWeight:800,color:r.u>=t.t.u?"#16a34a":"#dc2626"}}>U{r.u}</span>
-      <button onClick={()=>svT(t.d,null,null)} style={{background:"none",border:"none",color:"#dc2626",fontSize:9}}>✕</button>
-     </span>:<span style={{color:t.d<td?"#dc2626":"#8a9b8a",fontSize:8}}>{t.d<td?"미측정":"예정"}</span>}
-    </div>)})}
-  </div>
-  <div style={S.cd}>
-   <div style={{fontSize:10,fontWeight:800,color:"#6b7c6b",marginBottom:6}}>러닝 테스트 (11월~)</div>
-   {RTD.map(t=>{const dn=RT.some(x=>x.date===t.d);return(
-    <div key={t.d} style={{display:"flex",justifyContent:"space-between",padding:"4px 8px",borderRadius:5,background:"rgba(0,0,0,0.02)",marginBottom:2}}>
-     <span style={{fontSize:10,fontWeight:700}}>{t.l}</span>
-     <span style={{color:dn?"#16a34a":t.d<td?"#dc2626":"#d97706",fontSize:10,fontWeight:800}}>{dn?"✓":t.d<td?"미측정":"D-"+db(new Date(),new Date(t.d))}</span>
-    </div>)})}
-  </div>
-  <div style={{height:160}}/>
- </div>);
-}
-
-const S={
- app:{background:"#f0f7f0",height:"100vh",maxWidth:480,margin:"0 auto",display:"flex",flexDirection:"column",paddingTop:"env(safe-area-inset-top)",overflow:"hidden"},
- nav:{display:"flex",background:"#fff",borderBottom:"1px solid rgba(0,0,0,0.06)"},
- nb:{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"8px 0",background:"none",border:"none",color:"#8a9b8a",borderBottom:"2px solid transparent"},
- na:{color:"#16a34a",borderBottomColor:"#16a34a",background:"rgba(22,163,74,0.04)"},
- ct:{flex:1,padding:10,overflowY:"auto",WebkitOverflowScrolling:"touch"},
- cd:{background:"#fff",borderRadius:11,padding:12,border:"1px solid rgba(0,0,0,0.06)",boxShadow:"0 1px 2px rgba(0,0,0,0.03)"},
- inf:{background:"rgba(0,0,0,0.02)",borderRadius:7,padding:"7px 9px",color:"#6b7c6b",fontSize:9,border:"1px solid rgba(0,0,0,0.04)"},
- bt:{height:44,borderRadius:9,border:"1px solid rgba(0,0,0,0.08)",background:"#fff",color:"#6b7c6b",fontSize:15,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"},
- inp:{width:"100%",padding:"10px 12px",background:"#f0f7f0",border:"1px solid rgba(0,0,0,0.1)",borderRadius:9,color:"#1a2e1a",fontSize:14,fontWeight:600},
- cn:{width:32,height:32,borderRadius:8,background:"#fff",border:"1px solid rgba(0,0,0,0.08)",color:"#6b7c6b",fontSize:16,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"},
- dn:{width:38,height:38,borderRadius:9,background:"#fff",border:"1px solid rgba(0,0,0,0.08)",color:"#6b7c6b",fontSize:18,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0},
+const comp=(d,dt)=>{
+  if(!d)return 0;let n=0;
+  if(d.ev)n++;
+  if(d.em>=100)n++;
+  if(d.jp)n++;
+  if(d.md&&d.md[0]&&d.md[1])n++;
+  if(d.nf)n++;
+  if(d.yg&&d.yg.every(Boolean))n++;
+  if(d.pu&&d.pu.every(v=>v>=puT(dt)))n++;
+  if(d.pl&&d.pl.every(v=>v>=plT(dt)))n++;
+  if(d.rn)n++;
+  return n;
 };
+
+/* ══════ App ══════ */
+function App(){
+  const[tab,sTab]=useState(0);
+  const[sel,sSel]=useState(now());
+  const[all,sAll]=useState(()=>ld(KD));
+  const[jpn,sJpn]=useState(()=>{const d=ld(KJ);return Array.isArray(d.r)?d.r:[false,false,false]});
+  const[dy,sDy]=useState(()=>{const d=ld(KD)[now()];return d?{...E(),...d}:E()});
+  const[svd,sSvd]=useState(false);
+
+  useEffect(()=>{const d=all[sel];sDy(d?{...E(),...d}:E());sSvd(false)},[sel]);
+
+  const t=now(),dL=Math.max(0,dif(t,DDAY)),dT=dif(START,DDAY),dE=dif(START,t);
+  const pt=puT(sel),plt=plT(sel);
+  const isT=sel===t;
+
+  /* handlers */
+  const save=()=>{const n={...all,[sel]:{...dy,ts:Date.now()}};sAll(n);sv(KD,n);sSvd(true);if(navigator.vibrate)navigator.vibrate(50);setTimeout(()=>sSvd(false),2e3)};
+  const tg=f=>sDy(p=>({...p,[f]:!p[f]}));
+  const tgA=(f,i)=>sDy(p=>{const a=[...(p[f]||[])];a[i]=!a[i];return{...p,[f]:a}});
+  const sR=(f,i,v)=>sDy(p=>{const a=[...(p[f]||[])];a[i]=Math.max(0,parseInt(v)||0);return{...p,[f]:a}});
+  const sM=v=>sDy(p=>({...p,em:Math.max(0,parseInt(v)||0)}));
+  const nav=d=>{const dt=new Date(sel);dt.setDate(dt.getDate()+d);const s=fmt(dt);if(s>=START&&s<=DDAY)sSel(s)};
+  const fillPu=()=>sDy(p=>({...p,pu:[pt,pt,pt,pt,pt]}));
+  const fillPl=()=>sDy(p=>({...p,pl:[plt,plt,plt,plt,plt]}));
+  const tgJpn=i=>{const n=[...jpn];n[i]=!n[i];sJpn(n);sv(KJ,{r:n})};
+
+  /* stats */
+  const wk=getWk(sel);
+  const wTr=wk.filter(d=>isTr(all[d])).length;
+  const allD=Object.keys(all).filter(d=>d>=START&&d<=DDAY&&isTr(all[d])).sort();
+  const totTr=allD.length;
+  const wksE=Math.max(1,Math.ceil(Math.max(1,dE)/7));
+  const compR=Math.min(100,Math.round(totTr/Math.max(1,wksE*WT)*100));
+  const dayC=comp(dy,sel);
+
+  /* date label */
+  const dObj=new Date(sel),dIdx=dObj.getDay(),dName=DL[dIdx===0?6:dIdx-1];
+  const dLabel=(dObj.getMonth()+1)+"/"+dObj.getDate()+" ("+dName+")";
+
+  /* ── Today Tab ── */
+  const rToday=()=>(
+    <div>
+      <div className="dn">
+        <button onClick={()=>nav(-1)}>◀</button>
+        <span className="dt">{isT?"오늘 ":""}{dLabel}</span>
+        <button onClick={()=>nav(1)}>▶</button>
+      </div>
+
+      {dayC>0 && <div className="comp">오늘 달성: <b>{dayC}/9</b> 항목 ({Math.round(dayC/9*100)}%)</div>}
+
+      <div className="cd">
+        <div className="ct" style={{fontSize:12,color:"var(--dim)",fontWeight:400}}>
+          💪 목표 — 푸시업 {pt}개×5세트 · 풀업 {plt}개×5세트
+        </div>
+      </div>
+
+      {/* 영어 */}
+      <div className="cd">
+        <div className="ct">🗣️ 영어 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>120분/일</span></div>
+        <div className="ci">
+          <button className={"ck"+(dy.ev?" on":"")} onClick={()=>tg("ev")}>{dy.ev?"✓":""}</button>
+          <div className="cl">화상영어 20분</div>
+        </div>
+        <div className="ci">
+          <div className="cl" style={{flex:1}}>자습 (쓰기/읽기/쉐도잉)</div>
+          <input className="ri" type="number" inputMode="numeric" pattern="[0-9]*" value={dy.em||""} placeholder="분" onChange={e=>sM(e.target.value)}/>
+          <span style={{fontSize:11,color:"var(--dim)",marginLeft:4}}>/100분</span>
+        </div>
+      </div>
+
+      {/* 일본어 */}
+      <div className="cd">
+        <div className="ct">🇯🇵 일본어 교재</div>
+        <div className="ci">
+          <button className={"ck"+(dy.jp?" on":"")} onClick={()=>tg("jp")}>{dy.jp?"✓":""}</button>
+          <div className="cl">오늘 교재 학습</div>
+        </div>
+      </div>
+
+      {/* 명상 */}
+      <div className="cd">
+        <div className="ct">🧘 명상 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>10분×2</span></div>
+        {[0,1].map(i=>(
+          <div key={"md"+i} className="ci">
+            <button className={"ck"+(dy.md[i]?" on":"")} onClick={()=>tgA("md",i)}>{dy.md[i]?"✓":""}</button>
+            <div className="cl">{i+1}차 명상</div>
+          </div>
+        ))}
+      </div>
+
+      {/* N.F. */}
+      <div className="cd">
+        <div className="ci">
+          <button className={"ck"+(dy.nf?" on":"")} onClick={()=>tg("nf")}>{dy.nf?"✓":""}</button>
+          <div className="cl">🧠 N.F.</div>
+        </div>
+      </div>
+
+      {/* 요가 */}
+      <div className="cd">
+        <div className="ct">🤸 요가 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>5분×4</span></div>
+        {[0,1,2,3].map(i=>(
+          <div key={"yg"+i} className="ci">
+            <button className={"ck"+(dy.yg[i]?" on":"")} onClick={()=>tgA("yg",i)}>{dy.yg[i]?"✓":""}</button>
+            <div className="cl">{i+1}차 요가</div>
+          </div>
+        ))}
+      </div>
+
+      {/* 푸시업 */}
+      <div className="cd">
+        <div className="ct">
+          <span>💪 푸시업</span>
+          <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{pt}개×5</span>
+          <button className="fill-btn" onClick={fillPu}>목표 채우기</button>
+        </div>
+        <div className="sr">
+          {[0,1,2,3,4].map(i=>(
+            <div key={"pu"+i} style={{textAlign:"center"}}>
+              <div style={{fontSize:10,color:"var(--dim)",marginBottom:3}}>S{i+1}</div>
+              <input className="ri" type="number" inputMode="numeric" pattern="[0-9]*" value={dy.pu[i]||""} placeholder={String(pt)} onChange={e=>sR("pu",i,e.target.value)} style={{width:48}}/>
+            </div>
+          ))}
+        </div>
+        <div style={{marginTop:6,fontSize:12,color:"var(--dim)",textAlign:"right"}}>
+          합계 {dy.pu.reduce((a,b)=>a+b,0)}/{pt*5}
+        </div>
+      </div>
+
+      {/* 풀업 */}
+      <div className="cd">
+        <div className="ct">
+          <span>🏋️ 풀업</span>
+          <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{plt}개×5</span>
+          <button className="fill-btn" onClick={fillPl}>목표 채우기</button>
+        </div>
+        <div className="sr">
+          {[0,1,2,3,4].map(i=>(
+            <div key={"pl"+i} style={{textAlign:"center"}}>
+              <div style={{fontSize:10,color:"var(--dim)",marginBottom:3}}>S{i+1}</div>
+              <input className="ri" type="number" inputMode="numeric" pattern="[0-9]*" value={dy.pl[i]||""} placeholder={String(plt)} onChange={e=>sR("pl",i,e.target.value)} style={{width:48}}/>
+            </div>
+          ))}
+        </div>
+        <div style={{marginTop:6,fontSize:12,color:"var(--dim)",textAlign:"right"}}>
+          합계 {dy.pl.reduce((a,b)=>a+b,0)}/{plt*5}
+        </div>
+      </div>
+
+      {/* 러닝 */}
+      <div className="cd">
+        <div className="ci">
+          <button className={"ck"+(dy.rn?" on":"")} onClick={()=>tg("rn")}>{dy.rn?"✓":""}</button>
+          <div className="cl">🏃 러닝 30분 슬로우 조깅</div>
+        </div>
+      </div>
+
+      {/* 저장 */}
+      <button className={"sb"+(svd?" ok":"")} onClick={save}>
+        {svd?"✓ 저장완료":"💾 저장"+(all[sel]?" (수정)":"")}
+      </button>
+
+      {all[sel]&&all[sel].ts?<div style={{textAlign:"center",fontSize:11,color:"var(--dim)",marginBottom:16}}>
+        마지막 저장: {new Date(all[sel].ts).toLocaleString("ko-KR")}
+      </div>:null}
+    </div>
+  );
+
+  /* ── Progress Tab ── */
+  const rProgress=()=>{
+    const engTotal=allD.reduce((s,d)=>{const x=all[d];return s+(x.ev?20:0)+(x.em||0)},0);
+    const jpnDays=allD.filter(d=>all[d].jp).length;
+    const avgComp=allD.length>0?Math.round(allD.reduce((s,d)=>s+comp(all[d],d),0)/allD.length/9*100):0;
+
+    /* pushup avg */
+    const puDays=allD.filter(d=>all[d].pu&&all[d].pu.some(v=>v>0));
+    const puAvg=puDays.length>0?Math.round(puDays.reduce((s,d)=>s+all[d].pu.reduce((a,b)=>a+b,0)/5,0)/puDays.length):0;
+    const plDays=allD.filter(d=>all[d].pl&&all[d].pl.some(v=>v>0));
+    const plAvg=plDays.length>0?Math.round(plDays.reduce((s,d)=>s+all[d].pl.reduce((a,b)=>a+b,0)/5,0)/plDays.length):0;
+
+    return(
+      <div>
+        {/* D-Day */}
+        <div className="cd" style={{textAlign:"center"}}>
+          <div style={{fontSize:12,color:"var(--dim)"}}>D-Day 까지</div>
+          <div style={{fontSize:36,fontWeight:800,color:"var(--acc)",margin:"4px 0"}}>{dL}일</div>
+          <div className="pb"><div className="pf pg" style={{width:Math.min(100,dE/dT*100)+"%"}}/></div>
+          <div style={{fontSize:11,color:"var(--dim)",marginTop:4}}>{dE}일 경과 / {dT}일</div>
+        </div>
+
+        {/* 이번 주 */}
+        <div className="cd">
+          <div className="ct">📅 이번 주</div>
+          <div className="wd">
+            {wk.map((d,i)=>(
+              <div key={d} className={"wdot"+(isTr(all[d])?" tr":"")+(d===t?" td":"")}>
+                {DL[i]}
+              </div>
+            ))}
+          </div>
+          <div style={{textAlign:"center",fontSize:13,marginTop:4}}>
+            <b style={{color:wTr>=WT?"var(--acc)":"var(--acc3)"}}>{wTr}</b>
+            <span style={{color:"var(--dim)"}}> / {WT}일 목표</span>
+            {wTr>=WT && <span style={{marginLeft:6}}>🎯</span>}
+          </div>
+        </div>
+
+        {/* 전체 통계 */}
+        <div className="cd">
+          <div className="ct">📊 전체 현황</div>
+          <div className="sg">
+            <div className="sx">
+              <div className="sn" style={{color:"var(--acc)"}}>{totTr}</div>
+              <div className="sl">훈련일</div>
+            </div>
+            <div className="sx">
+              <div className="sn" style={{color:compR>=80?"var(--acc)":"var(--acc3)"}}>{compR}%</div>
+              <div className="sl">주간 달성률</div>
+            </div>
+            <div className="sx">
+              <div className="sn" style={{color:"var(--acc2)"}}>{avgComp}%</div>
+              <div className="sl">항목 달성률</div>
+            </div>
+            <div className="sx">
+              <div className="sn" style={{color:"var(--acc2)"}}>{Math.floor(engTotal/60)}h{engTotal%60}m</div>
+              <div className="sl">영어 누적</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 운동 진행 */}
+        <div className="cd">
+          <div className="ct">💪 운동 진행</div>
+          <div style={{marginBottom:10}}>
+            <div style={{fontSize:13,display:"flex",justifyContent:"space-between"}}>
+              <span>푸시업 평균</span>
+              <span style={{color:"var(--acc)"}}>{puAvg}개/세트</span>
+            </div>
+            <div className="pb"><div className="pf pg" style={{width:Math.min(100,puAvg/20*100)+"%"}}/></div>
+            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>현재 목표: {puT(t)}개/세트 (매주 +1)</div>
+          </div>
+          <div>
+            <div style={{fontSize:13,display:"flex",justifyContent:"space-between"}}>
+              <span>풀업 평균</span>
+              <span style={{color:"var(--acc2)"}}>{plAvg}개/세트</span>
+            </div>
+            <div className="pb"><div className="pf pbl" style={{width:Math.min(100,plAvg/7*100)+"%"}}/></div>
+            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>현재 목표: {plT(t)}개/세트 (5→6→7 단계적)</div>
+          </div>
+        </div>
+
+        {/* 일본어 회독 */}
+        <div className="cd">
+          <div className="ct">🇯🇵 일본어 교재 3회독</div>
+          <div className="jpb">
+            {[0,1,2].map(i=>(
+              <div key={"jp"+i} className={"jp"+(jpn[i]?" dn2":"")} onClick={()=>tgJpn(i)}>
+                <div className="jpn">{jpn[i]?"✓":i+1}</div>
+                <div className="jpl">{i+1}회독{jpn[i]?" 완료":""}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{fontSize:11,color:"var(--dim)",marginTop:8,textAlign:"center"}}>
+            {jpn.filter(Boolean).length}/3 완료 · 11월: 1회독 / 12월: 2+3회독
+          </div>
+          <div style={{fontSize:11,color:"var(--dim)",textAlign:"center"}}>
+            교재 학습일: {jpnDays}일
+          </div>
+        </div>
+
+        {/* 푸시업 주간 목표표 */}
+        <div className="cd">
+          <div className="ct">📈 푸시업 주간 목표</div>
+          <div style={{fontSize:12,lineHeight:1.8}}>
+            {Array.from({length:9},(_, i)=>{
+              const wStart=new Date(START);wStart.setDate(wStart.getDate()+i*7);
+              const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+6);
+              const reps=12+i;
+              const isCur=t>=fmt(wStart)&&t<=fmt(wEnd);
+              return(
+                <div key={i} style={{color:isCur?"var(--acc)":"var(--dim)",fontWeight:isCur?600:400}}>
+                  {isCur?"▶ ":"  "}W{i+1} ({(wStart.getMonth()+1)}/{wStart.getDate()}~): {reps}개×5 = {reps*5}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 풀업 단계 */}
+        <div className="cd">
+          <div className="ct">📈 풀업 단계</div>
+          <div style={{fontSize:12,lineHeight:1.8}}>
+            <div style={{color:t<"2026-11-16"?"var(--acc2)":"var(--dim)",fontWeight:t<"2026-11-16"?600:400}}>
+              {t<"2026-11-16"?"▶ ":"  "}~11/15: 5개×5 = 25
+            </div>
+            <div style={{color:t>="2026-11-16"&&t<"2026-12-07"?"var(--acc2)":"var(--dim)",fontWeight:t>="2026-11-16"&&t<"2026-12-07"?600:400}}>
+              {t>="2026-11-16"&&t<"2026-12-07"?"▶ ":"  "}11/16~12/6: 6개×5 = 30
+            </div>
+            <div style={{color:t>="2026-12-07"?"var(--acc2)":"var(--dim)",fontWeight:t>="2026-12-07"?600:400}}>
+              {t>="2026-12-07"?"▶ ":"  "}12/7~D-Day: 7개×5 = 35
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ── History Tab ── */
+  const rHistory=()=>{
+    const days=[];
+    const d=new Date(DDAY);
+    const s=new Date(START);
+    while(d>=s){days.push(fmt(d));d.setDate(d.getDate()-1)}
+    const filtered=days.filter(d=>d<=t);
+
+    return(
+      <div>
+        <div className="cd">
+          <div className="ct">📅 훈련 기록</div>
+          <div style={{fontSize:12,color:"var(--dim)",marginBottom:8}}>
+            총 {totTr}일 훈련 / {dE}일 경과
+          </div>
+          {filtered.slice(0,30).map(d=>{
+            const x=all[d];
+            const tr=isTr(x);
+            return(
+              <div key={d} className="hd" onClick={()=>{sSel(d);sTab(0)}} style={{cursor:"pointer"}}>
+                <div className="hdt">
+                  <span style={{color:tr?"var(--txt)":"var(--dim)"}}>
+                    {d===t?"오늘":""} {new Date(d).getMonth()+1}/{new Date(d).getDate()} ({DL[new Date(d).getDay()===0?6:new Date(d).getDay()-1]})
+                  </span>
+                  {tr?<span style={{fontSize:11,color:"var(--acc)"}}>{comp(x,d)}/9</span>
+                    :<span style={{fontSize:11,color:"var(--dim)"}}>휴식</span>}
+                </div>
+                {tr&&x&&(
+                  <div className="htg">
+                    {x.ev&&<span className="ht ok">화상영어</span>}
+                    {x.em>0&&<span className="ht ok">자습{x.em}분</span>}
+                    {x.jp&&<span className="ht ok">일본어</span>}
+                    {x.md&&x.md.filter(Boolean).length>0&&<span className="ht ok">명상{x.md.filter(Boolean).length}/2</span>}
+                    {x.nf&&<span className="ht ok">NF</span>}
+                    {x.yg&&x.yg.filter(Boolean).length>0&&<span className="ht ok">요가{x.yg.filter(Boolean).length}/4</span>}
+                    {x.pu&&x.pu.some(v=>v>0)&&<span className="ht ok">푸시업{x.pu.reduce((a,b)=>a+b,0)}</span>}
+                    {x.pl&&x.pl.some(v=>v>0)&&<span className="ht ok">풀업{x.pl.reduce((a,b)=>a+b,0)}</span>}
+                    {x.rn&&<span className="ht ok">러닝</span>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  /* ── Main Render ── */
+  return(
+    <div>
+      <div className="hdr">
+        <h1>단련 S3</h1>
+        <div className="dday">D-{dL}</div>
+        <div className="dday-sub">🎯 12.25 최상의 컨디션 회복</div>
+        <div className="pbar"><div className="pfill" style={{width:Math.min(100,dE/dT*100)+"%"}}/></div>
+      </div>
+
+      <div className="tabs">
+        {["📋 오늘","📊 현황","📅 기록"].map((t,i)=>(
+          <button key={i} className={"tab"+(tab===i?" on":"")} onClick={()=>sTab(i)}>{t}</button>
+        ))}
+      </div>
+
+      {tab===0&&rToday()}
+      {tab===1&&rProgress()}
+      {tab===2&&rHistory()}
+
+      <div style={{textAlign:"center",padding:"20px 0 40px",fontSize:11,color:"#333"}}>
+        단련 S3 · D-Day 2026.12.25 · 주{WT}회
+      </div>
+    </div>
+  );
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
