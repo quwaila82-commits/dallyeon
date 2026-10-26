@@ -96,8 +96,8 @@ const plT=d=>d>="2026-12-07"?7:d>="2026-11-16"?6:5;
 const getWk=d=>{const dt=new Date(d),dy=dt.getDay()||7,mn=new Date(dt);mn.setDate(dt.getDate()-dy+1);return Array.from({length:7},(_,i)=>{const x=new Date(mn);x.setDate(mn.getDate()+i);return fmt(x)})};
 
 /* ── Data ── */
-const E=()=>({ev:false,em:0,jp:false,md:0,nf:false,yg:0,pu:[0,0,0,0,0],pl:[0,0,0,0,0],rn:false,ts:0});
-const isTr=d=>d&&(d.ev||d.em>0||d.jp||d.md>0||d.nf||d.yg>0||(d.pu&&d.pu.some(v=>v>0))||(d.pl&&d.pl.some(v=>v>0))||d.rn);
+const E=()=>({ev:false,em:0,jp:false,md:0,nf:false,yg:0,pu:0,pl:0,rn:false,ts:0});
+const isTr=d=>d&&(d.ev||d.em>0||d.jp||d.md>0||d.nf||d.yg>0||d.pu>0||d.pl>0||d.rn);
 
 const comp=(d,dt)=>{
   if(!d)return 0;let n=0;
@@ -107,8 +107,8 @@ const comp=(d,dt)=>{
   if(d.md>=2)n++;
   if(d.nf)n++;
   if(d.yg>=4)n++;
-  if(d.pu&&d.pu.every(v=>v>=puT(dt)))n++;
-  if(d.pl&&d.pl.every(v=>v>=plT(dt)))n++;
+  if(d.pu>=5)n++;
+  if(d.pl>=5)n++;
   if(d.rn)n++;
   return n;
 };
@@ -135,8 +135,7 @@ function App(){
   const sR=(f,i,v)=>sDy(p=>{const a=[...(p[f]||[])];a[i]=Math.max(0,parseInt(v)||0);return{...p,[f]:a}});
   const sM=v=>sDy(p=>({...p,em:Math.max(0,parseInt(v)||0)}));
   const nav=d=>{const dt=new Date(sel);dt.setDate(dt.getDate()+d);const s=fmt(dt);if(s>=START&&s<=DDAY)sSel(s)};
-  const fillPu=()=>sDy(p=>({...p,pu:[pt,pt,pt,pt,pt]}));
-  const fillPl=()=>sDy(p=>({...p,pl:[plt,plt,plt,plt,plt]}));
+
   const tgJpn=i=>{const n=[...jpn];n[i]=!n[i];sJpn(n);sv(KJ,{r:n})};
 
   /* stats */
@@ -221,42 +220,18 @@ function App(){
       </div>
 
       {/* 푸시업 */}
-      <div className="cd">
-        <div className="ct">
-          <span>💪 푸시업</span>
-          <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{pt}개×5</span>
-          <button className="fill-btn" onClick={fillPu}>목표 채우기</button>
-        </div>
-        <div className="sr">
-          {[0,1,2,3,4].map(i=>(
-            <div key={"pu"+i} style={{textAlign:"center"}}>
-              <div style={{fontSize:10,color:"var(--dim)",marginBottom:3}}>S{i+1}</div>
-              <input className="ri" type="number" inputMode="numeric" pattern="[0-9]*" value={dy.pu[i]||""} placeholder={String(pt)} onChange={e=>sR("pu",i,e.target.value)} style={{width:48}}/>
-            </div>
-          ))}
-        </div>
-        <div style={{marginTop:6,fontSize:12,color:"var(--dim)",textAlign:"right"}}>
-          합계 {dy.pu.reduce((a,b)=>a+b,0)}/{pt*5}
+      <div className="cd" onClick={()=>sDy(p=>({...p,pu:(p.pu||0)>=5?0:(p.pu||0)+1}))} style={{cursor:"pointer"}}>
+        <div className="ct">💪 푸시업 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{pt}개×5세트</span><span style={{marginLeft:"auto",fontSize:13,color:dy.pu>=5?"var(--acc)":"var(--dim)"}}>{dy.pu||0}/5</span></div>
+        <div className="tbar">
+          {[1,2,3,4,5].map(i=><div key={"pu"+i} className={"tseg"+((dy.pu||0)>=i?" on":"")}/>) }
         </div>
       </div>
 
       {/* 풀업 */}
-      <div className="cd">
-        <div className="ct">
-          <span>🏋️ 풀업</span>
-          <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{plt}개×5</span>
-          <button className="fill-btn" onClick={fillPl}>목표 채우기</button>
-        </div>
-        <div className="sr">
-          {[0,1,2,3,4].map(i=>(
-            <div key={"pl"+i} style={{textAlign:"center"}}>
-              <div style={{fontSize:10,color:"var(--dim)",marginBottom:3}}>S{i+1}</div>
-              <input className="ri" type="number" inputMode="numeric" pattern="[0-9]*" value={dy.pl[i]||""} placeholder={String(plt)} onChange={e=>sR("pl",i,e.target.value)} style={{width:48}}/>
-            </div>
-          ))}
-        </div>
-        <div style={{marginTop:6,fontSize:12,color:"var(--dim)",textAlign:"right"}}>
-          합계 {dy.pl.reduce((a,b)=>a+b,0)}/{plt*5}
+      <div className="cd" onClick={()=>sDy(p=>({...p,pl:(p.pl||0)>=5?0:(p.pl||0)+1}))} style={{cursor:"pointer"}}>
+        <div className="ct">🏋️ 풀업 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{plt}개×5세트</span><span style={{marginLeft:"auto",fontSize:13,color:dy.pl>=5?"var(--acc)":"var(--dim)"}}>{dy.pl||0}/5</span></div>
+        <div className="tbar">
+          {[1,2,3,4,5].map(i=><div key={"pl"+i} className={"tseg"+((dy.pl||0)>=i?" on":"")}/>) }
         </div>
       </div>
 
@@ -286,10 +261,8 @@ function App(){
     const avgComp=allD.length>0?Math.round(allD.reduce((s,d)=>s+comp(all[d],d),0)/allD.length/9*100):0;
 
     /* pushup avg */
-    const puDays=allD.filter(d=>all[d].pu&&all[d].pu.some(v=>v>0));
-    const puAvg=puDays.length>0?Math.round(puDays.reduce((s,d)=>s+all[d].pu.reduce((a,b)=>a+b,0)/5,0)/puDays.length):0;
-    const plDays=allD.filter(d=>all[d].pl&&all[d].pl.some(v=>v>0));
-    const plAvg=plDays.length>0?Math.round(plDays.reduce((s,d)=>s+all[d].pl.reduce((a,b)=>a+b,0)/5,0)/plDays.length):0;
+    const puDays=allD.filter(d=>(all[d].pu||0)>0).length;
+    const plDays2=allD.filter(d=>(all[d].pl||0)>0).length;
 
     return(
       <div>
@@ -346,19 +319,17 @@ function App(){
           <div className="ct">💪 운동 진행</div>
           <div style={{marginBottom:10}}>
             <div style={{fontSize:13,display:"flex",justifyContent:"space-between"}}>
-              <span>푸시업 평균</span>
-              <span style={{color:"var(--acc)"}}>{puAvg}개/세트</span>
+              <span>푸시업 훈련일</span>
+              <span style={{color:"var(--acc)"}}>{puDays}일</span>
             </div>
-            <div className="pb"><div className="pf pg" style={{width:Math.min(100,puAvg/20*100)+"%"}}/></div>
-            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>현재 목표: {puT(t)}개/세트 (매주 +1)</div>
+            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>목표: {puT(t)}개×5세트 (매주 +1)</div>
           </div>
           <div>
             <div style={{fontSize:13,display:"flex",justifyContent:"space-between"}}>
-              <span>풀업 평균</span>
-              <span style={{color:"var(--acc2)"}}>{plAvg}개/세트</span>
+              <span>풀업 훈련일</span>
+              <span style={{color:"var(--acc2)"}}>{plDays2}일</span>
             </div>
-            <div className="pb"><div className="pf pbl" style={{width:Math.min(100,plAvg/7*100)+"%"}}/></div>
-            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>현재 목표: {plT(t)}개/세트 (5→6→7 단계적)</div>
+            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>목표: {plT(t)}개×5세트 (5→6→7 단계적)</div>
           </div>
         </div>
 
@@ -453,8 +424,8 @@ function App(){
                     {x.md>0&&<span className="ht ok">명상{x.md}/2</span>}
                     {x.nf&&<span className="ht ok">NF</span>}
                     {x.yg>0&&<span className="ht ok">요가{x.yg}/4</span>}
-                    {x.pu&&x.pu.some(v=>v>0)&&<span className="ht ok">푸시업{x.pu.reduce((a,b)=>a+b,0)}</span>}
-                    {x.pl&&x.pl.some(v=>v>0)&&<span className="ht ok">풀업{x.pl.reduce((a,b)=>a+b,0)}</span>}
+                    {x.pu>0&&<span className="ht ok">푸시업{x.pu}/5</span>}
+                    {x.pl>0&&<span className="ht ok">풀업{x.pl}/5</span>}
                     {x.rn&&<span className="ht ok">러닝</span>}
                   </div>
                 )}
