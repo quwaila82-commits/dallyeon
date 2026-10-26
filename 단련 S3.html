@@ -1,0 +1,501 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#08080f">
+<title>단련 S3</title>
+<style>
+:root{--bg:#08080f;--card:#12121e;--card2:#1a1a2a;--acc:#4ade80;--acc2:#60a5fa;--acc3:#fbbf24;--txt:#e0e0ec;--dim:#55557a;--bdr:#222238;--r:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom,20px)}
+.hdr{background:linear-gradient(135deg,#0f0f2a,#161630);padding:24px 16px 18px;text-align:center}
+.hdr h1{font-size:14px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.dday{font-size:42px;font-weight:800;background:linear-gradient(135deg,var(--acc),#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:4px 0}
+.dday-sub{font-size:12px;color:var(--dim)}
+.pbar{height:4px;background:#1a1a30;border-radius:2px;margin:12px 32px 0;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--acc),#22d3ee);border-radius:2px;transition:width .3s}
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:10}
+.tab{flex:1;padding:11px;text-align:center;font-size:13px;color:var(--dim);border:none;background:none;cursor:pointer;font-family:inherit}
+.tab.on{color:var(--acc);border-bottom:2px solid var(--acc)}
+.cd{background:var(--card);border-radius:var(--r);margin:10px 14px;padding:14px}
+.ct{font-size:14px;font-weight:600;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ci{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #1a1a2a;gap:10px}
+.ci:last-child{border-bottom:none}
+.ck{width:30px;height:30px;border-radius:50%;border:2px solid #333350;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;color:transparent;transition:all .15s;font-family:inherit}
+.ck.on{background:var(--acc);border-color:var(--acc);color:#000}
+.cl{flex:1;font-size:14px}.cs{font-size:11px;color:var(--dim)}
+.ri{width:52px;background:#1a1a2a;border:1px solid var(--bdr);border-radius:8px;color:#fff;text-align:center;padding:6px 2px;font-size:15px;font-family:inherit}
+.ri:focus{border-color:var(--acc);outline:none}
+.sr{display:flex;gap:6px;align-items:flex-end;justify-content:center}
+.sb{display:block;width:calc(100% - 28px);margin:14px auto;padding:14px;background:var(--acc);color:#000;font-size:16px;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;font-family:inherit;transition:all .2s}
+.sb:active{transform:scale(.97);opacity:.9}
+.sb.ok{background:#166534;color:var(--acc)}
+.dn{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px}
+.dn button{background:var(--card2);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;font-family:inherit}
+.dn .dt{font-size:15px;font-weight:600}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sx{background:var(--card2);border-radius:10px;padding:12px;text-align:center}
+.sn{font-size:26px;font-weight:700}.sl{font-size:11px;color:var(--dim);margin-top:2px}
+.wd{display:flex;gap:5px;justify-content:center;margin:6px 0}
+.wdot{width:34px;height:34px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--dim)}
+.wdot.tr{background:#14532d;color:var(--acc)}.wdot.td{box-shadow:0 0 0 2px var(--acc)}
+.pb{height:6px;background:#1a1a2a;border-radius:3px;overflow:hidden;margin-top:6px}
+.pf{height:100%;border-radius:3px;transition:width .3s}
+.pg{background:var(--acc)}.pbl{background:var(--acc2)}.py{background:var(--acc3)}
+.jpb{display:flex;gap:8px}
+.jp{flex:1;background:var(--card2);border-radius:10px;padding:10px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.jp.dn2{background:#1e3a5f;border-color:var(--acc2)}
+.jpn{font-size:20px;font-weight:700}.jpl{font-size:10px;color:var(--dim);margin-top:2px}
+.hd{padding:10px 0;border-bottom:1px solid #1a1a2a}
+.hdt{font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.htg{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.ht{font-size:10px;padding:2px 7px;border-radius:8px;background:#1a1a2a;color:var(--dim)}
+.ht.ok{background:#14532d;color:var(--acc)}
+.fill-btn{font-size:11px;background:var(--card2);border:1px solid var(--bdr);color:var(--acc);padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit}
+.comp{text-align:center;padding:8px;margin:0 14px;background:var(--card);border-radius:var(--r);font-size:13px}
+.comp b{color:var(--acc)}
+.tbar{display:flex;gap:4px;cursor:pointer;padding:4px 0}
+.tseg{height:28px;border-radius:6px;background:#1a1a2a;flex:1;transition:background .15s}
+.tseg.on{background:var(--acc)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
+<script>
+window.onerror=function(m){document.getElementById("root").innerHTML='<div style="padding:20px;color:#f87171"><b>오류:</b> '+m+'</div>';return true};
+(function(){try{var m={name:"단련 S3",short_name:"단련",start_url:"./",display:"standalone",background_color:"#08080f",theme_color:"#08080f"};var b=new Blob([JSON.stringify(m)],{type:"application/json"});var l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(b);document.head.appendChild(l)}catch(e){}})();
+</script>
+<script type="text/babel">
+const {useState,useEffect,useMemo} = React;
+
+/* ── Constants ── */
+const START="2026-10-26",DDAY="2026-12-25",WT=4;
+const KD="s3-daily",KJ="s3-jpn";
+const DL=["월","화","수","목","금","토","일"];
+
+/* ── Utils ── */
+const fmt=d=>{const x=d instanceof Date?d:new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")};
+const now=()=>fmt(new Date());
+const dif=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const wkn=d=>Math.max(0,Math.floor(dif(START,d)/7));
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+
+/* ── Targets ── */
+const puT=d=>Math.max(12,12+wkn(d));
+const plT=d=>d>="2026-12-07"?7:d>="2026-11-16"?6:5;
+
+/* ── Week (Mon-Sun) ── */
+const getWk=d=>{const dt=new Date(d),dy=dt.getDay()||7,mn=new Date(dt);mn.setDate(dt.getDate()-dy+1);return Array.from({length:7},(_,i)=>{const x=new Date(mn);x.setDate(mn.getDate()+i);return fmt(x)})};
+
+/* ── Data ── */
+const E=()=>({ev:false,em:0,jp:false,md:0,nf:false,yg:0,pu:[0,0,0,0,0],pl:[0,0,0,0,0],rn:false,ts:0});
+const isTr=d=>d&&(d.ev||d.em>0||d.jp||d.md>0||d.nf||d.yg>0||(d.pu&&d.pu.some(v=>v>0))||(d.pl&&d.pl.some(v=>v>0))||d.rn);
+
+const comp=(d,dt)=>{
+  if(!d)return 0;let n=0;
+  if(d.ev)n++;
+  if(d.em>=5)n++;
+  if(d.jp)n++;
+  if(d.md>=2)n++;
+  if(d.nf)n++;
+  if(d.yg>=4)n++;
+  if(d.pu&&d.pu.every(v=>v>=puT(dt)))n++;
+  if(d.pl&&d.pl.every(v=>v>=plT(dt)))n++;
+  if(d.rn)n++;
+  return n;
+};
+
+/* ══════ App ══════ */
+function App(){
+  const[tab,sTab]=useState(0);
+  const[sel,sSel]=useState(now());
+  const[all,sAll]=useState(()=>ld(KD));
+  const[jpn,sJpn]=useState(()=>{const d=ld(KJ);return Array.isArray(d.r)?d.r:[false,false,false]});
+  const[dy,sDy]=useState(()=>{const d=ld(KD)[now()];return d?{...E(),...d}:E()});
+  const[svd,sSvd]=useState(false);
+
+  useEffect(()=>{const d=all[sel];sDy(d?{...E(),...d}:E());sSvd(false)},[sel]);
+
+  const t=now(),dL=Math.max(0,dif(t,DDAY)),dT=dif(START,DDAY),dE=dif(START,t);
+  const pt=puT(sel),plt=plT(sel);
+  const isT=sel===t;
+
+  /* handlers */
+  const save=()=>{const n={...all,[sel]:{...dy,ts:Date.now()}};sAll(n);sv(KD,n);sSvd(true);if(navigator.vibrate)navigator.vibrate(50);setTimeout(()=>sSvd(false),2e3)};
+  const tg=f=>sDy(p=>({...p,[f]:!p[f]}));
+  const tgA=(f,i)=>sDy(p=>{const a=[...(p[f]||[])];a[i]=!a[i];return{...p,[f]:a}});
+  const sR=(f,i,v)=>sDy(p=>{const a=[...(p[f]||[])];a[i]=Math.max(0,parseInt(v)||0);return{...p,[f]:a}});
+  const sM=v=>sDy(p=>({...p,em:Math.max(0,parseInt(v)||0)}));
+  const nav=d=>{const dt=new Date(sel);dt.setDate(dt.getDate()+d);const s=fmt(dt);if(s>=START&&s<=DDAY)sSel(s)};
+  const fillPu=()=>sDy(p=>({...p,pu:[pt,pt,pt,pt,pt]}));
+  const fillPl=()=>sDy(p=>({...p,pl:[plt,plt,plt,plt,plt]}));
+  const tgJpn=i=>{const n=[...jpn];n[i]=!n[i];sJpn(n);sv(KJ,{r:n})};
+
+  /* stats */
+  const wk=getWk(sel);
+  const wTr=wk.filter(d=>isTr(all[d])).length;
+  const allD=Object.keys(all).filter(d=>d>=START&&d<=DDAY&&isTr(all[d])).sort();
+  const totTr=allD.length;
+  const wksE=Math.max(1,Math.ceil(Math.max(1,dE)/7));
+  const compR=Math.min(100,Math.round(totTr/Math.max(1,wksE*WT)*100));
+  const dayC=comp(dy,sel);
+
+  /* date label */
+  const dObj=new Date(sel),dIdx=dObj.getDay(),dName=DL[dIdx===0?6:dIdx-1];
+  const dLabel=(dObj.getMonth()+1)+"/"+dObj.getDate()+" ("+dName+")";
+
+  /* ── Today Tab ── */
+  const rToday=()=>(
+    <div>
+      <div className="dn">
+        <button onClick={()=>nav(-1)}>◀</button>
+        <span className="dt">{isT?"오늘 ":""}{dLabel}</span>
+        <button onClick={()=>nav(1)}>▶</button>
+      </div>
+
+      {dayC>0 && <div className="comp">오늘 달성: <b>{dayC}/9</b> 항목 ({Math.round(dayC/9*100)}%)</div>}
+
+      <div className="cd">
+        <div className="ct" style={{fontSize:12,color:"var(--dim)",fontWeight:400}}>
+          💪 목표 — 푸시업 {pt}개×5세트 · 풀업 {plt}개×5세트
+        </div>
+      </div>
+
+      {/* 영어 */}
+      <div className="cd">
+        <div className="ct">🗣️ 영어 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>120분/일</span></div>
+        <div className="ci">
+          <button className={"ck"+(dy.ev?" on":"")} onClick={()=>tg("ev")}>{dy.ev?"✓":""}</button>
+          <div className="cl">화상영어 20분</div>
+        </div>
+        <div style={{paddingTop:8}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+            <span style={{fontSize:13}}>자습 20분×5</span>
+            <span style={{fontSize:13,color:dy.em>=5?"var(--acc)":"var(--dim)"}}>{dy.em*20}/100분</span>
+          </div>
+          <div className="tbar" onClick={()=>sDy(p=>({...p,em:p.em>=5?0:p.em+1}))}>
+            {[1,2,3,4,5].map(i=><div key={"em"+i} className={"tseg"+(dy.em>=i?" on":"")}/>) }
+          </div>
+        </div>
+      </div>
+
+      {/* 일본어 */}
+      <div className="cd">
+        <div className="ct">🇯🇵 일본어 교재</div>
+        <div className="ci">
+          <button className={"ck"+(dy.jp?" on":"")} onClick={()=>tg("jp")}>{dy.jp?"✓":""}</button>
+          <div className="cl">오늘 교재 학습</div>
+        </div>
+      </div>
+
+      {/* 명상 */}
+      <div className="cd" onClick={()=>sDy(p=>({...p,md:p.md>=2?0:p.md+1}))} style={{cursor:"pointer"}}>
+        <div className="ct">🧘 명상 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>10분×2</span><span style={{marginLeft:"auto",fontSize:13,color:dy.md>=2?"var(--acc)":"var(--dim)"}}>{dy.md}/2</span></div>
+        <div className="tbar">
+          {[1,2].map(i=><div key={"md"+i} className={"tseg"+(dy.md>=i?" on":"")}/>) }
+        </div>
+      </div>
+
+      {/* N.F. */}
+      <div className="cd">
+        <div className="ci">
+          <button className={"ck"+(dy.nf?" on":"")} onClick={()=>tg("nf")}>{dy.nf?"✓":""}</button>
+          <div className="cl">🧠 N.F.</div>
+        </div>
+      </div>
+
+      {/* 요가 */}
+      <div className="cd" onClick={()=>sDy(p=>({...p,yg:p.yg>=4?0:p.yg+1}))} style={{cursor:"pointer"}}>
+        <div className="ct">🤸 요가 <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>5분×4</span><span style={{marginLeft:"auto",fontSize:13,color:dy.yg>=4?"var(--acc)":"var(--dim)"}}>{dy.yg}/4</span></div>
+        <div className="tbar">
+          {[1,2,3,4].map(i=><div key={"yg"+i} className={"tseg"+(dy.yg>=i?" on":"")}/>) }
+        </div>
+      </div>
+
+      {/* 푸시업 */}
+      <div className="cd">
+        <div className="ct">
+          <span>💪 푸시업</span>
+          <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{pt}개×5</span>
+          <button className="fill-btn" onClick={fillPu}>목표 채우기</button>
+        </div>
+        <div className="sr">
+          {[0,1,2,3,4].map(i=>(
+            <div key={"pu"+i} style={{textAlign:"center"}}>
+              <div style={{fontSize:10,color:"var(--dim)",marginBottom:3}}>S{i+1}</div>
+              <input className="ri" type="number" inputMode="numeric" pattern="[0-9]*" value={dy.pu[i]||""} placeholder={String(pt)} onChange={e=>sR("pu",i,e.target.value)} style={{width:48}}/>
+            </div>
+          ))}
+        </div>
+        <div style={{marginTop:6,fontSize:12,color:"var(--dim)",textAlign:"right"}}>
+          합계 {dy.pu.reduce((a,b)=>a+b,0)}/{pt*5}
+        </div>
+      </div>
+
+      {/* 풀업 */}
+      <div className="cd">
+        <div className="ct">
+          <span>🏋️ 풀업</span>
+          <span style={{fontSize:11,color:"var(--dim)",fontWeight:400}}>{plt}개×5</span>
+          <button className="fill-btn" onClick={fillPl}>목표 채우기</button>
+        </div>
+        <div className="sr">
+          {[0,1,2,3,4].map(i=>(
+            <div key={"pl"+i} style={{textAlign:"center"}}>
+              <div style={{fontSize:10,color:"var(--dim)",marginBottom:3}}>S{i+1}</div>
+              <input className="ri" type="number" inputMode="numeric" pattern="[0-9]*" value={dy.pl[i]||""} placeholder={String(plt)} onChange={e=>sR("pl",i,e.target.value)} style={{width:48}}/>
+            </div>
+          ))}
+        </div>
+        <div style={{marginTop:6,fontSize:12,color:"var(--dim)",textAlign:"right"}}>
+          합계 {dy.pl.reduce((a,b)=>a+b,0)}/{plt*5}
+        </div>
+      </div>
+
+      {/* 러닝 */}
+      <div className="cd">
+        <div className="ci">
+          <button className={"ck"+(dy.rn?" on":"")} onClick={()=>tg("rn")}>{dy.rn?"✓":""}</button>
+          <div className="cl">🏃 러닝 30분 슬로우 조깅</div>
+        </div>
+      </div>
+
+      {/* 저장 */}
+      <button className={"sb"+(svd?" ok":"")} onClick={save}>
+        {svd?"✓ 저장완료":"💾 저장"+(all[sel]?" (수정)":"")}
+      </button>
+
+      {all[sel]&&all[sel].ts?<div style={{textAlign:"center",fontSize:11,color:"var(--dim)",marginBottom:16}}>
+        마지막 저장: {new Date(all[sel].ts).toLocaleString("ko-KR")}
+      </div>:null}
+    </div>
+  );
+
+  /* ── Progress Tab ── */
+  const rProgress=()=>{
+    const engTotal=allD.reduce((s,d)=>{const x=all[d];return s+(x.ev?20:0)+((x.em||0)*20)},0);
+    const jpnDays=allD.filter(d=>all[d].jp).length;
+    const avgComp=allD.length>0?Math.round(allD.reduce((s,d)=>s+comp(all[d],d),0)/allD.length/9*100):0;
+
+    /* pushup avg */
+    const puDays=allD.filter(d=>all[d].pu&&all[d].pu.some(v=>v>0));
+    const puAvg=puDays.length>0?Math.round(puDays.reduce((s,d)=>s+all[d].pu.reduce((a,b)=>a+b,0)/5,0)/puDays.length):0;
+    const plDays=allD.filter(d=>all[d].pl&&all[d].pl.some(v=>v>0));
+    const plAvg=plDays.length>0?Math.round(plDays.reduce((s,d)=>s+all[d].pl.reduce((a,b)=>a+b,0)/5,0)/plDays.length):0;
+
+    return(
+      <div>
+        {/* D-Day */}
+        <div className="cd" style={{textAlign:"center"}}>
+          <div style={{fontSize:12,color:"var(--dim)"}}>D-Day 까지</div>
+          <div style={{fontSize:36,fontWeight:800,color:"var(--acc)",margin:"4px 0"}}>{dL}일</div>
+          <div className="pb"><div className="pf pg" style={{width:Math.min(100,dE/dT*100)+"%"}}/></div>
+          <div style={{fontSize:11,color:"var(--dim)",marginTop:4}}>{dE}일 경과 / {dT}일</div>
+        </div>
+
+        {/* 이번 주 */}
+        <div className="cd">
+          <div className="ct">📅 이번 주</div>
+          <div className="wd">
+            {wk.map((d,i)=>(
+              <div key={d} className={"wdot"+(isTr(all[d])?" tr":"")+(d===t?" td":"")}>
+                {DL[i]}
+              </div>
+            ))}
+          </div>
+          <div style={{textAlign:"center",fontSize:13,marginTop:4}}>
+            <b style={{color:wTr>=WT?"var(--acc)":"var(--acc3)"}}>{wTr}</b>
+            <span style={{color:"var(--dim)"}}> / {WT}일 목표</span>
+            {wTr>=WT && <span style={{marginLeft:6}}>🎯</span>}
+          </div>
+        </div>
+
+        {/* 전체 통계 */}
+        <div className="cd">
+          <div className="ct">📊 전체 현황</div>
+          <div className="sg">
+            <div className="sx">
+              <div className="sn" style={{color:"var(--acc)"}}>{totTr}</div>
+              <div className="sl">훈련일</div>
+            </div>
+            <div className="sx">
+              <div className="sn" style={{color:compR>=80?"var(--acc)":"var(--acc3)"}}>{compR}%</div>
+              <div className="sl">주간 달성률</div>
+            </div>
+            <div className="sx">
+              <div className="sn" style={{color:"var(--acc2)"}}>{avgComp}%</div>
+              <div className="sl">항목 달성률</div>
+            </div>
+            <div className="sx">
+              <div className="sn" style={{color:"var(--acc2)"}}>{Math.floor(engTotal/60)}h{engTotal%60}m</div>
+              <div className="sl">영어 누적</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 운동 진행 */}
+        <div className="cd">
+          <div className="ct">💪 운동 진행</div>
+          <div style={{marginBottom:10}}>
+            <div style={{fontSize:13,display:"flex",justifyContent:"space-between"}}>
+              <span>푸시업 평균</span>
+              <span style={{color:"var(--acc)"}}>{puAvg}개/세트</span>
+            </div>
+            <div className="pb"><div className="pf pg" style={{width:Math.min(100,puAvg/20*100)+"%"}}/></div>
+            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>현재 목표: {puT(t)}개/세트 (매주 +1)</div>
+          </div>
+          <div>
+            <div style={{fontSize:13,display:"flex",justifyContent:"space-between"}}>
+              <span>풀업 평균</span>
+              <span style={{color:"var(--acc2)"}}>{plAvg}개/세트</span>
+            </div>
+            <div className="pb"><div className="pf pbl" style={{width:Math.min(100,plAvg/7*100)+"%"}}/></div>
+            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>현재 목표: {plT(t)}개/세트 (5→6→7 단계적)</div>
+          </div>
+        </div>
+
+        {/* 일본어 회독 */}
+        <div className="cd">
+          <div className="ct">🇯🇵 일본어 교재 3회독</div>
+          <div className="jpb">
+            {[0,1,2].map(i=>(
+              <div key={"jp"+i} className={"jp"+(jpn[i]?" dn2":"")} onClick={()=>tgJpn(i)}>
+                <div className="jpn">{jpn[i]?"✓":i+1}</div>
+                <div className="jpl">{i+1}회독{jpn[i]?" 완료":""}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{fontSize:11,color:"var(--dim)",marginTop:8,textAlign:"center"}}>
+            {jpn.filter(Boolean).length}/3 완료 · 11월: 1회독 / 12월: 2+3회독
+          </div>
+          <div style={{fontSize:11,color:"var(--dim)",textAlign:"center"}}>
+            교재 학습일: {jpnDays}일
+          </div>
+        </div>
+
+        {/* 푸시업 주간 목표표 */}
+        <div className="cd">
+          <div className="ct">📈 푸시업 주간 목표</div>
+          <div style={{fontSize:12,lineHeight:1.8}}>
+            {Array.from({length:9},(_, i)=>{
+              const wStart=new Date(START);wStart.setDate(wStart.getDate()+i*7);
+              const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+6);
+              const reps=12+i;
+              const isCur=t>=fmt(wStart)&&t<=fmt(wEnd);
+              return(
+                <div key={i} style={{color:isCur?"var(--acc)":"var(--dim)",fontWeight:isCur?600:400}}>
+                  {isCur?"▶ ":"  "}W{i+1} ({(wStart.getMonth()+1)}/{wStart.getDate()}~): {reps}개×5 = {reps*5}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 풀업 단계 */}
+        <div className="cd">
+          <div className="ct">📈 풀업 단계</div>
+          <div style={{fontSize:12,lineHeight:1.8}}>
+            <div style={{color:t<"2026-11-16"?"var(--acc2)":"var(--dim)",fontWeight:t<"2026-11-16"?600:400}}>
+              {t<"2026-11-16"?"▶ ":"  "}~11/15: 5개×5 = 25
+            </div>
+            <div style={{color:t>="2026-11-16"&&t<"2026-12-07"?"var(--acc2)":"var(--dim)",fontWeight:t>="2026-11-16"&&t<"2026-12-07"?600:400}}>
+              {t>="2026-11-16"&&t<"2026-12-07"?"▶ ":"  "}11/16~12/6: 6개×5 = 30
+            </div>
+            <div style={{color:t>="2026-12-07"?"var(--acc2)":"var(--dim)",fontWeight:t>="2026-12-07"?600:400}}>
+              {t>="2026-12-07"?"▶ ":"  "}12/7~D-Day: 7개×5 = 35
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ── History Tab ── */
+  const rHistory=()=>{
+    const days=[];
+    const d=new Date(DDAY);
+    const s=new Date(START);
+    while(d>=s){days.push(fmt(d));d.setDate(d.getDate()-1)}
+    const filtered=days.filter(d=>d<=t);
+
+    return(
+      <div>
+        <div className="cd">
+          <div className="ct">📅 훈련 기록</div>
+          <div style={{fontSize:12,color:"var(--dim)",marginBottom:8}}>
+            총 {totTr}일 훈련 / {dE}일 경과
+          </div>
+          {filtered.slice(0,30).map(d=>{
+            const x=all[d];
+            const tr=isTr(x);
+            return(
+              <div key={d} className="hd" onClick={()=>{sSel(d);sTab(0)}} style={{cursor:"pointer"}}>
+                <div className="hdt">
+                  <span style={{color:tr?"var(--txt)":"var(--dim)"}}>
+                    {d===t?"오늘":""} {new Date(d).getMonth()+1}/{new Date(d).getDate()} ({DL[new Date(d).getDay()===0?6:new Date(d).getDay()-1]})
+                  </span>
+                  {tr?<span style={{fontSize:11,color:"var(--acc)"}}>{comp(x,d)}/9</span>
+                    :<span style={{fontSize:11,color:"var(--dim)"}}>휴식</span>}
+                </div>
+                {tr&&x&&(
+                  <div className="htg">
+                    {x.ev&&<span className="ht ok">화상영어</span>}
+                    {x.em>0&&<span className="ht ok">자습{x.em*20}분</span>}
+                    {x.jp&&<span className="ht ok">일본어</span>}
+                    {x.md>0&&<span className="ht ok">명상{x.md}/2</span>}
+                    {x.nf&&<span className="ht ok">NF</span>}
+                    {x.yg>0&&<span className="ht ok">요가{x.yg}/4</span>}
+                    {x.pu&&x.pu.some(v=>v>0)&&<span className="ht ok">푸시업{x.pu.reduce((a,b)=>a+b,0)}</span>}
+                    {x.pl&&x.pl.some(v=>v>0)&&<span className="ht ok">풀업{x.pl.reduce((a,b)=>a+b,0)}</span>}
+                    {x.rn&&<span className="ht ok">러닝</span>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  /* ── Main Render ── */
+  return(
+    <div>
+      <div className="hdr">
+        <h1>단련 S3</h1>
+        <div className="dday">D-{dL}</div>
+        <div className="dday-sub">🎯 12.25 최상의 컨디션 회복</div>
+        <div className="pbar"><div className="pfill" style={{width:Math.min(100,dE/dT*100)+"%"}}/></div>
+      </div>
+
+      <div className="tabs">
+        {["📋 오늘","📊 현황","📅 기록"].map((t,i)=>(
+          <button key={i} className={"tab"+(tab===i?" on":"")} onClick={()=>sTab(i)}>{t}</button>
+        ))}
+      </div>
+
+      {tab===0&&rToday()}
+      {tab===1&&rProgress()}
+      {tab===2&&rHistory()}
+
+      <div style={{textAlign:"center",padding:"20px 0 40px",fontSize:11,color:"#333"}}>
+        단련 S3 · D-Day 2026.12.25 · 주{WT}회
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>
+
+</body></html>
