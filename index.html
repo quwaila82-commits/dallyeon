@@ -146,6 +146,16 @@ function App(){
   const compR=Math.min(100,Math.round(totTr/Math.max(1,wksE*WT)*100));
   const dayC=comp(dy,sel);
 
+  /* brain & body achievement */
+  const brC=d=>{if(!d)return 0;let n=0;if(d.ev)n++;if(d.em>=5)n++;if(d.jp)n++;if(d.md>=2)n++;if(d.nf)n++;return n};
+  const boC=d=>{if(!d)return 0;let n=0;if(d.yg>=4)n++;if(d.pu>=5)n++;if(d.pl>=5)n++;if(d.rn)n++;return n};
+  const tWks=Math.max(1,Math.ceil(dif(START,DDAY)/7));
+  const brT=tWks*WT*5,boT=tWks*WT*4;
+  const brA=allD.reduce((s,d)=>s+brC(all[d]),0);
+  const boA=allD.reduce((s,d)=>s+boC(all[d]),0);
+  const brP=Math.min(100,Math.round(brA/Math.max(1,brT)*100));
+  const boP=Math.min(100,Math.round(boA/Math.max(1,boT)*100));
+
   /* date label */
   const dObj=new Date(sel),dIdx=dObj.getDay(),dName=DL[dIdx===0?6:dIdx-1];
   const dLabel=(dObj.getMonth()+1)+"/"+dObj.getDate()+" ("+dName+")";
@@ -444,6 +454,24 @@ function App(){
         <div className="dday">D-{dL}</div>
         <div className="dday-sub">🎯 12.25 최상의 컨디션 회복</div>
         <div className="pbar"><div className="pfill" style={{width:Math.min(100,dE/dT*100)+"%"}}/></div>
+        <div style={{display:"flex",gap:10,marginTop:10}}>
+          <div style={{flex:1}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}}>
+              <span>🧠 전교1등 두뇌</span>
+              <span style={{color:"var(--acc)",fontWeight:600}}>{brP}%</span>
+            </div>
+            <div className="pbar" style={{margin:0,height:10}}><div className="pfill" style={{width:brP+"%",height:10}}/></div>
+            <div style={{fontSize:9,color:"var(--dim)",marginTop:3}}>영어·일본어·명상·NF</div>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}}>
+              <span>💪 전교1등 육체</span>
+              <span style={{color:"#818cf8",fontWeight:600}}>{boP}%</span>
+            </div>
+            <div className="pbar" style={{margin:0,height:10}}><div className="pfill" style={{width:boP+"%",height:10,background:"linear-gradient(90deg,#818cf8,#a78bfa)"}}/></div>
+            <div style={{fontSize:9,color:"var(--dim)",marginTop:3}}>요가·푸시업·풀업·러닝</div>
+          </div>
+        </div>
       </div>
 
       <div className="tabs">
