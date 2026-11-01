@@ -75,7 +75,7 @@ window.onerror=function(m){document.getElementById("root").innerHTML='<div style
 const {useState,useEffect,useMemo} = React;
 
 /* ── Constants ── */
-const START="2026-10-29",DDAY="2026-12-25",WT=4;
+const START="2026-11-02",DDAY="2026-12-25",WT=4;
 const KD="s3-daily",KJ="s3-jpn";
 const DL=["월","화","수","목","금","토","일"];
 
@@ -88,15 +88,15 @@ const ld=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}}
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 
 /* ── Targets ── */
-const puT=d=>Math.max(12,12+wkn(d));
+const puT=d=>Math.min(20,15+wkn(d));
 const plT=d=>d>="2026-12-07"?7:d>="2026-11-16"?6:5;
 
 /* ── Week (Mon-Sun) ── */
 const getWk=d=>{const dt=new Date(d),dy=dt.getDay()||7,mn=new Date(dt);mn.setDate(dt.getDate()-dy+1);return Array.from({length:7},(_,i)=>{const x=new Date(mn);x.setDate(mn.getDate()+i);return fmt(x)})};
 
 /* ── Data ── */
-const E=()=>({ev:false,em:0,jp:false,md:0,nf:false,yg:0,pu:0,pl:0,rn:false,ts:0});
-const isTr=d=>d&&(d.ev||d.em>0||d.jp||d.md>0||d.nf||d.yg>0||d.pu>0||d.pl>0||d.rn);
+const E=()=>({ev:false,em:0,jp:false,md:0,nf:false,yg:0,pu:0,pl:0,ab:false,rn:false,ts:0});
+const isTr=d=>d&&(d.ev||d.em>0||d.jp||d.md>0||d.nf||d.yg>0||d.pu>0||d.pl>0||d.ab||d.rn);
 
 const comp=(d,dt)=>{
   if(!d)return 0;let n=0;
@@ -108,6 +108,7 @@ const comp=(d,dt)=>{
   if(d.yg>=4)n++;
   if(d.pu>=5)n++;
   if(d.pl>=5)n++;
+  if(d.ab)n++;
   if(d.rn)n++;
   return n;
 };
@@ -148,9 +149,9 @@ function App(){
 
   /* brain & body achievement */
   const brC=d=>{if(!d)return 0;let n=0;if(d.ev)n++;if(d.em>=5)n++;if(d.jp)n++;if(d.md>=2)n++;if(d.nf)n++;return n};
-  const boC=d=>{if(!d)return 0;let n=0;if(d.yg>=4)n++;if(d.pu>=5)n++;if(d.pl>=5)n++;if(d.rn)n++;return n};
+  const boC=d=>{if(!d)return 0;let n=0;if(d.yg>=4)n++;if(d.pu>=5)n++;if(d.pl>=5)n++;if(d.ab)n++;if(d.rn)n++;return n};
   const tWks=Math.max(1,Math.ceil(dif(START,DDAY)/7));
-  const brT=tWks*WT*5,boT=tWks*WT*4;
+  const brT=tWks*WT*5,boT=tWks*WT*5;
   const brA=allD.reduce((s,d)=>s+brC(all[d]),0);
   const boA=allD.reduce((s,d)=>s+boC(all[d]),0);
   const brP=Math.min(100,Math.round(brA/Math.max(1,brT)*100));
@@ -169,11 +170,28 @@ function App(){
         <button onClick={()=>nav(1)}>▶</button>
       </div>
 
-      {dayC>0 && <div className="comp">오늘 달성: <b>{dayC}/9</b> 항목 ({Math.round(dayC/9*100)}%)</div>}
+      {/* 이번 주 훈련 현황 */}
+      <div className="cd" style={{background:wTr>=WT?"rgba(52,211,153,0.1)":"rgba(255,255,255,0.03)",border:wTr>=WT?"1px solid rgba(52,211,153,0.3)":"1px solid rgba(255,255,255,0.06)"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+          <span style={{fontSize:13,fontWeight:600}}>📅 이번 주 훈련</span>
+          <span style={{fontSize:13,fontWeight:700,color:wTr>=WT?"#34d399":"var(--acc)"}}>{wTr}/{WT}일</span>
+        </div>
+        <div style={{display:"flex",gap:4}}>
+          {wk.map((d,i)=>{const done=isTr(all[d]);const isSel=d===sel;return(
+            <div key={d} onClick={()=>sSel(d)} style={{flex:1,textAlign:"center",cursor:"pointer",padding:"4px 0",borderRadius:6,background:isSel?"rgba(99,102,241,0.2)":"transparent",border:isSel?"1px solid var(--acc)":"1px solid transparent"}}>
+              <div style={{fontSize:9,color:"var(--dim)",marginBottom:2}}>{DL[i]}</div>
+              <div style={{fontSize:14}}>{done?"✅":d<=now()?"·":"—"}</div>
+            </div>
+          )})}
+        </div>
+        {wTr>=WT && <div style={{textAlign:"center",marginTop:6,fontSize:12,color:"#34d399",fontWeight:600}}>🎉 이번 주 목표 달성!</div>}
+      </div>
+
+      {dayC>0 && <div className="comp">오늘 달성: <b>{dayC}/10</b> 항목 ({Math.round(dayC/10*100)}%)</div>}
 
       <div className="cd">
         <div className="ct" style={{fontSize:12,color:"var(--dim)",fontWeight:400}}>
-          💪 목표 — 푸시업 {pt}개×5세트 · 풀업 {plt}개×5세트
+          💪 목표 — 푸시업 {pt}개×5세트 · 풀업 {plt}개×5세트 · 복근 1분
         </div>
       </div>
 
@@ -244,6 +262,14 @@ function App(){
         </div>
       </div>
 
+      {/* 복근 */}
+      <div className="cd">
+        <div className="ci">
+          <button className={"ck"+(dy.ab?" on":"")} onClick={()=>tg("ab")}>{dy.ab?"✓":""}</button>
+          <div className="cl">🔥 복근 1분</div>
+        </div>
+      </div>
+
       {/* 러닝 */}
       <div className="cd">
         <div className="ci">
@@ -267,7 +293,7 @@ function App(){
   const rProgress=()=>{
     const engTotal=allD.reduce((s,d)=>{const x=all[d];return s+(x.ev?20:0)+((x.em||0)*20)},0);
     const jpnDays=allD.filter(d=>all[d].jp).length;
-    const avgComp=allD.length>0?Math.round(allD.reduce((s,d)=>s+comp(all[d],d),0)/allD.length/9*100):0;
+    const avgComp=allD.length>0?Math.round(allD.reduce((s,d)=>s+comp(all[d],d),0)/allD.length/10*100):0;
 
     /* pushup avg */
     const puDays=allD.filter(d=>(all[d].pu||0)>0).length;
@@ -331,7 +357,7 @@ function App(){
               <span>푸시업 훈련일</span>
               <span style={{color:"var(--acc)"}}>{puDays}일</span>
             </div>
-            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>목표: {puT(t)}개×5세트 (매주 +1)</div>
+            <div style={{fontSize:11,color:"var(--dim)",marginTop:2}}>목표: {puT(t)}개×5세트 (15개→매주 +1)</div>
           </div>
           <div>
             <div style={{fontSize:13,display:"flex",justifyContent:"space-between"}}>
@@ -365,10 +391,10 @@ function App(){
         <div className="cd">
           <div className="ct">📈 푸시업 주간 목표</div>
           <div style={{fontSize:12,lineHeight:1.8}}>
-            {Array.from({length:9},(_, i)=>{
+            {Array.from({length:8},(_, i)=>{
               const wStart=new Date(START);wStart.setDate(wStart.getDate()+i*7);
               const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+6);
-              const reps=12+i;
+              const reps=15+i;
               const isCur=t>=fmt(wStart)&&t<=fmt(wEnd);
               return(
                 <div key={i} style={{color:isCur?"var(--acc)":"var(--dim)",fontWeight:isCur?600:400}}>
@@ -422,7 +448,7 @@ function App(){
                   <span style={{color:tr?"var(--txt)":"var(--dim)"}}>
                     {d===t?"오늘":""} {new Date(d).getMonth()+1}/{new Date(d).getDate()} ({DL[new Date(d).getDay()===0?6:new Date(d).getDay()-1]})
                   </span>
-                  {tr?<span style={{fontSize:11,color:"var(--acc)"}}>{comp(x,d)}/9</span>
+                  {tr?<span style={{fontSize:11,color:"var(--acc)"}}>{comp(x,d)}/10</span>
                     :<span style={{fontSize:11,color:"var(--dim)"}}>휴식</span>}
                 </div>
                 {tr&&x&&(
@@ -435,6 +461,7 @@ function App(){
                     {x.yg>0&&<span className="ht ok">요가{x.yg}/4</span>}
                     {x.pu>0&&<span className="ht ok">푸시업{x.pu}/5</span>}
                     {x.pl>0&&<span className="ht ok">풀업{x.pl}/5</span>}
+                    {x.ab&&<span className="ht ok">복근</span>}
                     {x.rn&&<span className="ht ok">러닝</span>}
                   </div>
                 )}
@@ -469,7 +496,7 @@ function App(){
               <span style={{color:"#818cf8",fontWeight:600}}>{boP}%</span>
             </div>
             <div className="pbar" style={{margin:0,height:10}}><div className="pfill" style={{width:boP+"%",height:10,background:"linear-gradient(90deg,#818cf8,#a78bfa)"}}/></div>
-            <div style={{fontSize:9,color:"var(--dim)",marginTop:3}}>요가·푸시업·풀업·러닝</div>
+            <div style={{fontSize:9,color:"var(--dim)",marginTop:3}}>요가·푸시업·풀업·복근·러닝</div>
           </div>
         </div>
       </div>
